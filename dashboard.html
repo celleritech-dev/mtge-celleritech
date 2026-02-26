@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard MTGE – Panel de Control | LOPDP Ecuador</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"><\/script>
+  <style>
+/* Dashboard MTGE - Estilos Completos */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --secondary: #64748b;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    padding: 30px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.logo p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.nav-menu {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(37, 99, 235, 0.2);
+    color: white;
+    border-left: 3px solid var(--primary);
+}
+
+.nav-item .icon {
+    font-size: 1.3rem;
+    margin-right: 12px;
+    width: 24px;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-new-treatment,
+.btn-import {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-new-treatment:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.btn-import {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-import:hover {
+    border-color: white;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 0;
+}
+
+.dashboard-header {
+    background: white;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-left h1 {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.breadcrumb {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-filter label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.date-filter select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-refresh {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-refresh:hover {
+    background: var(--primary-dark);
+}
+
+/* Content Sections */
+.content-section {
+    padding: 30px;
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.kpi-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.kpi-content {
+    flex: 1;
+}
+
+.kpi-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.kpi-trend {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.kpi-trend.positive {
+    color: var(--success);
+}
+
+.kpi-trend.negative {
+    color: var(--danger);
+}
+
+.kpi-trend.neutral {
+    color: var(--text-secondary);
+}
+
+/* Charts Grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.chart-card.chart-wide {
+    grid-column: 1 / -1;
+}
+
+.chart-card.chart-full {
+    grid-column: 1 / -1;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-header h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.chart-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-icon:hover {
+    background: var(--bg-main);
+}
+
+/* Alerts Section */
+.alerts-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.alerts-section h3 {
+    margin-bottom: 15px;
+}
+
+.alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert.alert-danger {
+    background: #fef2f2;
+    border-color: var(--danger);
+}
+
+.alert.alert-warning {
+    background: #fffbeb;
+    border-color: var(--warning);
+}
+
+.alert.alert-info {
+    background: #eff6ff;
+    border-color: var(--info);
+}
+
+.alert-content h4 {
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+}
+
+.alert-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Table Styles */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.search-box input {
+    padding: 10px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 300px;
+    font-size: 0.9rem;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-group select {
+    padding: 10px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.btn-export {
+    padding: 10px 20px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: var(--bg-main);
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+}
+
+th:hover {
+    background: var(--border);
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+    background: var(--bg-main);
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge.gran-escala {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge.no-gran-escala {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    transition: all 0.3s;
+}
+
+.btn-view {
+    background: var(--info);
+    color: white;
+}
+
+.btn-edit {
+    background: var(--warning);
+    color: white;
+}
+
+.btn-delete {
+    background: var(--danger);
+    color: white;
+}
+
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Comparison Section */
+.comparison-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-top: 30px;
+}
+
+.comparison-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.comparison-controls select {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.vs-label {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.comparison-result {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--bg-main);
+    border-radius: 8px;
+}
+
+.placeholder-text {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px;
+}
+
+/* Compliance Section */
+.compliance-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.compliance-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.compliance-card h3 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.compliance-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+}
+
+.compliance-details,
+.timeline-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.obligations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.obligation-item {
+    padding: 15px;
+    background: var(--bg-main);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+/* Risk Matrix */
+.risk-matrix {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.risk-cell {
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid;
+}
+
+.risk-cell h4 {
+    margin-bottom: 15px;
+}
+
+.risk-count {
+    font-size: 3rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.risk-high {
+    background: #fef2f2;
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.risk-medium {
+    background: #fffbeb;
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+.risk-low {
+    background: #d1fae5;
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.recommendations {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-top: 30px;
+}
+
+/* Reports Section */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.report-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.report-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.report-card h3 {
+    margin-bottom: 10px;
+}
+
+.report-card p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.btn-generate {
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-generate:hover {
+    background: var(--primary-dark);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideDown 0.3s;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .main-content {
+        margin-left: 70px;
+    }
+
+    .logo p,
+    .nav-item span:not(.icon) {
+        display: none;
+    }
+
+    .sidebar-footer button {
+        padding: 10px;
+        font-size: 1.2rem;
+    }
+
+    .charts-grid,
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* Extra: botón volver al formulario */
+.btn-back-form {
+  display:inline-block;margin:0 0 0 10px;padding:8px 16px;
+  background:rgba(255,255,255,.15);color:#fff;text-decoration:none;
+  border-radius:8px;border:1px solid rgba(255,255,255,.4);font-weight:600;font-size:.85rem;
+}
+.btn-back-form:hover{background:rgba(255,255,255,.3);}
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h2>🛡️ MTGE</h2>
+        <p>Panel de Control</p>
+        <a href="index.html" class="btn-back-form">← Formulario</a>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active" data-section="overview">
+          <span class="icon">📊</span><span>Resumen General</span>
+        </a>
+        <a href="#" class="nav-item" data-section="treatments">
+          <span class="icon">📋</span><span>Tratamientos</span>
+        </a>
+        <a href="#" class="nav-item" data-section="analytics">
+          <span class="icon">📈</span><span>Análisis Detallado</span>
+        </a>
+        <a href="#" class="nav-item" data-section="compliance">
+          <span class="icon">✅</span><span>Cumplimiento</span>
+        </a>
+        <a href="#" class="nav-item" data-section="risks">
+          <span class="icon">⚠️</span><span>Gestión de Riesgos</span>
+        </a>
+        <a href="#" class="nav-item" data-section="reports">
+          <span class="icon">📄</span><span>Reportes</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-new-treatment" onclick="window.location.href='index.html'">
+          ➕ Nueva Evaluación
+        </button>
+        <button class="btn-import" onclick="importarDatos()">
+          📥 Importar JSON
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1 id="sectionTitle">Resumen General</h1>
+          <p class="breadcrumb">Dashboard / <span id="breadcrumb">Resumen</span></p>
+        </div>
+        <div class="header-right">
+          <div class="date-filter">
+            <label>Período:</label>
+            <select id="periodFilter" onchange="filtrarPorPeriodo()">
+              <option value="all">Todo</option>
+              <option value="month">Último mes</option>
+              <option value="quarter">Último trimestre</option>
+              <option value="year" selected>Último año</option>
+            </select>
+          </div>
+          <button class="btn-refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+        </div>
+      </header>
+
+      <!-- Overview -->
+      <section id="overview-section" class="content-section active">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#dbeafe;">📋</div>
+            <div class="kpi-content">
+              <p class="kpi-label">Total Tratamientos</p>
+              <h3 class="kpi-value" id="totalTratamientos">0</h3>
+              <span class="kpi-trend positive">Registrados en el RAT</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#fee2e2;">🚨</div>
+            <div class="kpi-content">
+              <p class="kpi-label">Gran Escala</p>
+              <h3 class="kpi-value" id="granEscala">0</h3>
+              <span class="kpi-trend neutral" id="granEscalaPct">0% del total</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#fef3c7;">⚖️</div>
+            <div class="kpi-content">
+              <p class="kpi-label">Puntuación Promedio</p>
+              <h3 class="kpi-value" id="promedioScore">0</h3>
+              <span class="kpi-trend neutral">Umbral: 6 puntos</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#d1fae5;">👥</div>
+            <div class="kpi-content">
+              <p class="kpi-label">Titulares Totales</p>
+              <h3 class="kpi-value" id="totalTitulares">0</h3>
+              <span class="kpi-trend positive">Personas afectadas</span>
+            </div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Distribución por Clasificación</h3>
+              <button class="btn-icon" onclick="descargarGrafico('clasificacionChart')">⬇️</button>
+            </div>
+            <canvas id="clasificacionChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Distribución de Puntuaciones</h3>
+              <button class="btn-icon" onclick="descargarGrafico('scoreDistChart')">⬇️</button>
+            </div>
+            <canvas id="scoreDistChart"></canvas>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card chart-wide">
+            <div class="chart-header">
+              <h3>Evolución de Tratamientos por Mes</h3>
+              <button class="btn-icon" onclick="descargarGrafico('evolucionChart')">⬇️</button>
+            </div>
+            <canvas id="evolucionChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Variables Críticas (Promedio)</h3>
+              <button class="btn-icon" onclick="descargarGrafico('variablesChart')">⬇️</button>
+            </div>
+            <canvas id="variablesChart"></canvas>
+          </div>
+        </div>
+        <div class="alerts-section">
+          <h3>⚠️ Alertas y Recomendaciones</h3>
+          <div id="alertsContainer" class="alerts-container"></div>
+        </div>
+      </section>
+
+      <!-- Treatments -->
+      <section id="treatments-section" class="content-section">
+        <div class="table-controls">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar tratamiento..."
+                   onkeyup="filtrarTabla()">
+          </div>
+          <div class="filter-group">
+            <select id="filterClasificacion" onchange="filtrarTabla()">
+              <option value="">Todas las clasificaciones</option>
+              <option value="gran-escala">Gran Escala</option>
+              <option value="no-gran-escala">No Gran Escala</option>
+            </select>
+            <button class="btn-export" onclick="exportarTabla()">📥 Exportar CSV</button>
+            <button class="btn-export" style="background:#ef4444;margin-left:8px;"
+                    onclick="limpiarRegistro()">🗑️ Limpiar todo</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table id="tratamientosTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable(0)">Tratamiento ↕️</th>
+                <th onclick="sortTable(1)">Responsable ↕️</th>
+                <th onclick="sortTable(2)">Fecha ↕️</th>
+                <th onclick="sortTable(3)">Puntuación ↕️</th>
+                <th onclick="sortTable(4)">Clasificación ↕️</th>
+                <th onclick="sortTable(5)">Titulares ↕️</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tratamientosTableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </section>
+
+      <!-- Analytics -->
+      <section id="analytics-section" class="content-section">
+        <div class="analytics-grid">
+          <div class="chart-card chart-full">
+            <div class="chart-header">
+              <h3>Análisis de Variables MTGE</h3>
+              <p class="chart-subtitle">Promedios por variable en todos los tratamientos</p>
+            </div>
+            <canvas id="variablesRadarChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Categorías de Datos</h3></div>
+            <canvas id="categoriasChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Alcance Geográfico</h3></div>
+            <canvas id="geografiaChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Frecuencia de Tratamiento</h3></div>
+            <canvas id="frecuenciaChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Permanencia de Tratamiento</h3></div>
+            <canvas id="permanenciaChart"></canvas>
+          </div>
+        </div>
+        <div class="comparison-section">
+          <h3>📊 Análisis Comparativo</h3>
+          <div class="comparison-controls">
+            <select id="compare1" onchange="actualizarComparacion()">
+              <option value="">Seleccionar tratamiento 1</option>
+            </select>
+            <span class="vs-label">VS</span>
+            <select id="compare2" onchange="actualizarComparacion()">
+              <option value="">Seleccionar tratamiento 2</option>
+            </select>
+          </div>
+          <div id="comparisonResult" class="comparison-result">
+            <p class="placeholder-text">Selecciona dos tratamientos para compararlos</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Compliance -->
+      <section id="compliance-section" class="content-section">
+        <div class="compliance-overview">
+          <div class="compliance-card">
+            <h3>📋 Obligaciones Activas</h3>
+            <div class="compliance-stat">
+              <span class="stat-number" id="obligacionesActivas">0</span>
+              <span class="stat-label">Tratamientos con obligaciones especiales</span>
+            </div>
+          </div>
+          <div class="compliance-card">
+            <h3>✅ Evaluaciones EIPD</h3>
+            <div class="compliance-stat">
+              <span class="stat-number" id="eipdRequeridas">0</span>
+              <span class="stat-label">EIPD requeridas</span>
+            </div>
+          </div>
+          <div class="compliance-card">
+            <h3>👤 Delegados DPD</h3>
+            <div class="compliance-stat">
+              <span class="stat-number" id="dpdRequeridos">0</span>
+              <span class="stat-label">Requieren designación de DPD</span>
+            </div>
+          </div>
+          <div class="compliance-card">
+            <h3>📝 Registro RAT</h3>
+            <div class="compliance-stat">
+              <span class="stat-number" id="ratRequeridos">0</span>
+              <span class="stat-label">Deben incorporarse al RAT</span>
+            </div>
+          </div>
+        </div>
+        <div class="compliance-details">
+          <h3>📋 Detalle de Obligaciones por Tratamiento</h3>
+          <div id="obligacionesDetalle" class="obligations-list"></div>
+        </div>
+        <div class="timeline-section">
+          <h3>📅 Próximas Revisiones</h3>
+          <div id="proximasRevisiones" class="timeline"></div>
+        </div>
+      </section>
+
+      <!-- Risks -->
+      <section id="risks-section" class="content-section">
+        <div class="risk-matrix">
+          <h3>🎯 Matriz de Riesgos (por Puntuación MTGE)</h3>
+          <div class="risk-grid">
+            <div class="risk-cell risk-high">
+              <h4>Riesgo Alto (≥10 pts)</h4>
+              <p class="risk-count" id="riskHigh">0</p>
+              <p>tratamientos</p>
+            </div>
+            <div class="risk-cell risk-medium">
+              <h4>Riesgo Medio (6-9 pts)</h4>
+              <p class="risk-count" id="riskMedium">0</p>
+              <p>tratamientos</p>
+            </div>
+            <div class="risk-cell risk-low">
+              <h4>Riesgo Bajo (&lt;6 pts)</h4>
+              <p class="risk-count" id="riskLow">0</p>
+              <p>tratamientos</p>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Análisis de Riesgo por Variables</h3></div>
+          <canvas id="riskAnalysisChart"></canvas>
+        </div>
+        <div class="recommendations">
+          <h3>💡 Recomendaciones de Mitigación</h3>
+          <div id="recommendationsContainer"></div>
+        </div>
+      </section>
+
+      <!-- Reports -->
+      <section id="reports-section" class="content-section">
+        <div class="reports-grid">
+          <div class="report-card">
+            <div class="report-icon">📊</div>
+            <h3>Reporte Ejecutivo</h3>
+            <p>Resumen general con métricas clave y tendencias para dirección</p>
+            <button class="btn-generate" onclick="generarReporteEjecutivo()">Generar PDF</button>
+          </div>
+          <div class="report-card">
+            <div class="report-icon">📋</div>
+            <h3>Reporte de Cumplimiento</h3>
+            <p>Detalle de obligaciones legales y estado de cumplimiento normativo</p>
+            <button class="btn-generate" onclick="generarReporteCumplimiento()">Generar PDF</button>
+          </div>
+          <div class="report-card">
+            <div class="report-icon">⚠️</div>
+            <h3>Reporte de Riesgos</h3>
+            <p>Análisis de riesgos identificados y recomendaciones de mitigación</p>
+            <button class="btn-generate" onclick="generarReporteRiesgos()">Generar PDF</button>
+          </div>
+          <div class="report-card">
+            <div class="report-icon">📥</div>
+            <h3>Exportar JSON</h3>
+            <p>Descarga todos los tratamientos en formato JSON para respaldo</p>
+            <button class="btn-generate" onclick="exportarJSON()">Descargar JSON</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+// Dashboard MTGE - JavaScript Principal
+
+// Base de datos simulada (en producción, conectar con backend)
+let tratamientosData = [];
+let charts = {};
+
+// Cargar datos iniciales
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarDashboard();
+    cargarDatosDemo();
+    cargarDatos();
+});
+
+// Inicializar dashboard
+function inicializarDashboard() {
+    // Configurar navegación
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const section = this.dataset.section;
+            cambiarSeccion(section);
+        });
+    });
+}
+
+// Cambiar sección activa
+function cambiarSeccion(seccionId) {
+    // Actualizar nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.target.closest('.nav-item').classList.add('active');
+    
+    // Actualizar secciones
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById(seccionId + '-section').classList.add('active');
+    
+    // Actualizar título
+    const titles = {
+        'overview': 'Resumen General',
+        'treatments': 'Tratamientos Registrados',
+        'analytics': 'Análisis Detallado',
+        'compliance': 'Cumplimiento Normativo',
+        'risks': 'Gestión de Riesgos',
+        'reports': 'Reportes y Exportaciones'
+    };
+    
+    document.getElementById('sectionTitle').textContent = titles[seccionId];
+    document.getElementById('breadcrumb').textContent = titles[seccionId];
+}
+
+// Cargar datos de demostración
+function cargarDatosDemo() {
+    tratamientosData = [
+        {
+            id: 1,
+            nombre: "Sistema de Nómina",
+            responsable: "Recursos Humanos",
+            fecha: "2026-01-15",
+            titulares: 1500,
+            volumen: 30,
+            categorias: 2,
+            frecuencia: 2,
+            permanencia: 2,
+            geografia: 2,
+            puntaje: 11,
+            clasificacion: "gran-escala"
+        },
+        {
+            id: 2,
+            nombre: "CRM Ventas",
+            responsable: "Departamento Comercial",
+            fecha: "2026-01-20",
+            titulares: 5000,
+            volumen: 25,
+            categorias: 0.5,
+            frecuencia: 2,
+            permanencia: 2,
+            geografia: 2,
+            puntaje: 9.5,
+            clasificacion: "gran-escala"
+        },
+        {
+            id: 3,
+            nombre: "Newsletter Marketing",
+            responsable: "Marketing",
+            fecha: "2026-02-01",
+            titulares: 800,
+            volumen: 8,
+            categorias: 0.5,
+            frecuencia: 1,
+            permanencia: 1,
+            geografia: 1,
+            puntaje: 4.5,
+            clasificacion: "no-gran-escala"
+        },
+        {
+            id: 4,
+            nombre: "Portal de Empleados",
+            responsable: "TI",
+            fecha: "2026-02-10",
+            titulares: 1200,
+            volumen: 35,
+            categorias: 2,
+            frecuencia: 2,
+            permanencia: 2,
+            geografia: 1,
+            puntaje: 10,
+            clasificacion: "gran-escala"
+        },
+        {
+            id: 5,
+            nombre: "Sistema de Registro Visitantes",
+            responsable: "Seguridad",
+            fecha: "2026-02-15",
+            titulares: 500,
+            volumen: 5,
+            categorias: 0.5,
+            frecuencia: 0.5,
+            permanencia: 0.5,
+            geografia: 1,
+            puntaje: 3.5,
+            clasificacion: "no-gran-escala"
+        },
+        {
+            id: 6,
+            nombre: "Plataforma E-learning",
+            responsable: "Capacitación",
+            fecha: "2026-01-25",
+            titulares: 2500,
+            volumen: 20,
+            categorias: 0.5,
+            frecuencia: 2,
+            permanencia: 2,
+            geografia: 2,
+            puntaje: 8.5,
+            clasificacion: "gran-escala"
+        }
+    ];
+}
+
+// Cargar y actualizar todos los datos
+function cargarDatos() {
+    actualizarKPIs();
+    actualizarGraficos();
+    actualizarTabla();
+    actualizarAlertas();
+    actualizarCumplimiento();
+    actualizarRiesgos();
+    llenarComparadores();
+}
+
+// Actualizar KPIs
+function actualizarKPIs() {
+    const total = tratamientosData.length;
+    const granEscala = tratamientosData.filter(t => t.clasificacion === "gran-escala").length;
+    const promedioScore = (tratamientosData.reduce((sum, t) => sum + t.puntaje, 0) / total).toFixed(1);
+    const totalTitulares = tratamientosData.reduce((sum, t) => sum + t.titulares, 0);
+    
+    document.getElementById('totalTratamientos').textContent = total;
+    document.getElementById('granEscala').textContent = granEscala;
+    document.getElementById('granEscalaPct').textContent = `${Math.round(granEscala/total*100)}% del total`;
+    document.getElementById('promedioScore').textContent = promedioScore;
+    document.getElementById('totalTitulares').textContent = totalTitulares.toLocaleString();
+}
+
+// Actualizar gráficos
+function actualizarGraficos() {
+    // Gráfico de clasificación (Pie)
+    const clasificacionCtx = document.getElementById('clasificacionChart');
+    if (charts.clasificacion) charts.clasificacion.destroy();
+    
+    const granEscala = tratamientosData.filter(t => t.clasificacion === "gran-escala").length;
+    const noGranEscala = tratamientosData.length - granEscala;
+    
+    charts.clasificacion = new Chart(clasificacionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Gran Escala', 'No Gran Escala'],
+            datasets: [{
+                data: [granEscala, noGranEscala],
+                backgroundColor: ['#ef4444', '#10b981'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Gráfico de distribución de puntuaciones
+    const scoreDistCtx = document.getElementById('scoreDistChart');
+    if (charts.scoreDist) charts.scoreDist.destroy();
+    
+    const scoreRanges = {
+        '0-3': 0, '3-6': 0, '6-9': 0, '9-12': 0, '12+': 0
+    };
+    
+    tratamientosData.forEach(t => {
+        if (t.puntaje < 3) scoreRanges['0-3']++;
+        else if (t.puntaje < 6) scoreRanges['3-6']++;
+        else if (t.puntaje < 9) scoreRanges['6-9']++;
+        else if (t.puntaje < 12) scoreRanges['9-12']++;
+        else scoreRanges['12+']++;
+    });
+    
+    charts.scoreDist = new Chart(scoreDistCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(scoreRanges),
+            datasets: [{
+                label: 'Número de Tratamientos',
+                data: Object.values(scoreRanges),
+                backgroundColor: '#3b82f6',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+    
+    // Gráfico de evolución temporal
+    const evolucionCtx = document.getElementById('evolucionChart');
+    if (charts.evolucion) charts.evolucion.destroy();
+    
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
+    const dataEvolucion = [2, 4, 4, 5, 6, 6]; // Datos simulados
+    
+    charts.evolucion = new Chart(evolucionCtx, {
+        type: 'line',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Tratamientos Registrados',
+                data: dataEvolucion,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+    
+    // Gráfico de variables críticas
+    const variablesCtx = document.getElementById('variablesChart');
+    if (charts.variables) charts.variables.destroy();
+    
+    const promedios = {
+        'Titulares': tratamientosData.reduce((sum, t) => sum + calcularPuntosTitulares(t.titulares), 0) / tratamientosData.length,
+        'Volumen': tratamientosData.reduce((sum, t) => sum + calcularPuntosVolumen(t.volumen), 0) / tratamientosData.length,
+        'Categorías': tratamientosData.reduce((sum, t) => sum + t.categorias, 0) / tratamientosData.length,
+        'Frecuencia': tratamientosData.reduce((sum, t) => sum + t.frecuencia, 0) / tratamientosData.length,
+        'Permanencia': tratamientosData.reduce((sum, t) => sum + t.permanencia, 0) / tratamientosData.length,
+        'Geografía': tratamientosData.reduce((sum, t) => sum + t.geografia, 0) / tratamientosData.length
+    };
+    
+    charts.variables = new Chart(variablesCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(promedios),
+            datasets: [{
+                label: 'Promedio de Puntos',
+                data: Object.values(promedios),
+                backgroundColor: [
+                    '#3b82f6', '#10b981', '#f59e0b', 
+                    '#ef4444', '#8b5cf6', '#06b6d4'
+                ],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 4
+                }
+            }
+        }
+    });
+    
+    // Gráfico Radar para Analytics
+    actualizarGraficoRadar();
+    
+    // Gráficos adicionales de Analytics
+    actualizarGraficosAnalytics();
+}
+
+// Actualizar gráfico radar
+function actualizarGraficoRadar() {
+    const radarCtx = document.getElementById('variablesRadarChart');
+    if (charts.radar) charts.radar.destroy();
+    
+    const promedios = {
+        'Titulares': tratamientosData.reduce((sum, t) => sum + calcularPuntosTitulares(t.titulares), 0) / tratamientosData.length,
+        'Volumen': tratamientosData.reduce((sum, t) => sum + calcularPuntosVolumen(t.volumen), 0) / tratamientosData.length,
+        'Categorías': tratamientosData.reduce((sum, t) => sum + t.categorias, 0) / tratamientosData.length,
+        'Frecuencia': tratamientosData.reduce((sum, t) => sum + t.frecuencia, 0) / tratamientosData.length,
+        'Permanencia': tratamientosData.reduce((sum, t) => sum + t.permanencia, 0) / tratamientosData.length,
+        'Geografía': tratamientosData.reduce((sum, t) => sum + t.geografia, 0) / tratamientosData.length
+    };
+    
+    charts.radar = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: Object.keys(promedios),
+            datasets: [{
+                label: 'Promedio de Puntuación',
+                data: Object.values(promedios),
+                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                borderColor: '#2563eb',
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#2563eb'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 4
+                }
+            }
+        }
+    });
+}
+
+// Actualizar gráficos de analytics
+function actualizarGraficosAnalytics() {
+    // Categorías
+    const categoriasCtx = document.getElementById('categoriasChart');
+    if (charts.categorias) charts.categorias.destroy();
+    
+    const catCount = {
+        'Solo Básicos': tratamientosData.filter(t => t.categorias === 0.5).length,
+        'Una Especial': tratamientosData.filter(t => t.categorias === 2).length,
+        'Múltiples Especiales': tratamientosData.filter(t => t.categorias === 3).length
+    };
+    
+    charts.categorias = new Chart(categoriasCtx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(catCount),
+            datasets: [{
+                data: Object.values(catCount),
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Geografía
+    const geografiaCtx = document.getElementById('geografiaChart');
+    if (charts.geografia) charts.geografia.destroy();
+    
+    const geoCount = {
+        'Local': tratamientosData.filter(t => t.geografia === 1).length,
+        'Nacional': tratamientosData.filter(t => t.geografia === 2).length,
+        'Transfronterizo': tratamientosData.filter(t => t.geografia === 3).length
+    };
+    
+    charts.geografia = new Chart(geografiaCtx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(geoCount),
+            datasets: [{
+                data: Object.values(geoCount),
+                backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Frecuencia y Permanencia (gráficos similares)
+    actualizarGraficoFrecuencia();
+    actualizarGraficoPermanencia();
+}
+
+function actualizarGraficoFrecuencia() {
+    const ctx = document.getElementById('frecuenciaChart');
+    if (charts.frecuencia) charts.frecuencia.destroy();
+    
+    const freqCount = {
+        'Puntual': tratamientosData.filter(t => t.frecuencia === 0.5).length,
+        'Periódica': tratamientosData.filter(t => t.frecuencia === 1).length,
+        'Continua': tratamientosData.filter(t => t.frecuencia === 2).length
+    };
+    
+    charts.frecuencia = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(freqCount),
+            datasets: [{
+                data: Object.values(freqCount),
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function actualizarGraficoPermanencia() {
+    const ctx = document.getElementById('permanenciaChart');
+    if (charts.permanencia) charts.permanencia.destroy();
+    
+    const permCount = {
+        'Ocasional': tratamientosData.filter(t => t.permanencia === 0.5).length,
+        'Temporal': tratamientosData.filter(t => t.permanencia === 1).length,
+        'Prolongada': tratamientosData.filter(t => t.permanencia === 2).length
+    };
+    
+    charts.permanencia = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(permCount),
+            datasets: [{
+                data: Object.values(permCount),
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+// Funciones auxiliares de cálculo
+function calcularPuntosTitulares(num) {
+    if (num <= 1000) return 1;
+    if (num <= 10000) return 2;
+    if (num <= 100000) return 3;
+    return 4;
+}
+
+function calcularPuntosVolumen(num) {
+    if (num <= 10) return 0.5;
+    if (num <= 30) return 1;
+    if (num <= 100) return 2;
+    return 3;
+}
+
+// Continúa en la siguiente parte...
+// Actualizar tabla de tratamientos
+function actualizarTabla() {
+    const tbody = document.getElementById('tratamientosTableBody');
+    tbody.innerHTML = '';
+    
+    tratamientosData.forEach(t => {
+        const row = `
+            <tr>
+                <td>${t.nombre}</td>
+                <td>${t.responsable}</td>
+                <td>${new Date(t.fecha).toLocaleDateString('es-EC')}</td>
+                <td><strong>${t.puntaje}</strong></td>
+                <td><span class="badge ${t.clasificacion}">${t.clasificacion === 'gran-escala' ? 'Gran Escala' : 'No Gran Escala'}</span></td>
+                <td>${t.titulares.toLocaleString()}</td>
+                <td>
+                    <button class="btn-action btn-view" onclick="verDetalle(${t.id})">👁️</button>
+                    <button class="btn-action btn-edit" onclick="editarTratamiento(${t.id})">✏️</button>
+                    <button class="btn-action btn-delete" onclick="eliminarTratamiento(${t.id})">🗑️</button>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// Filtrar tabla
+function filtrarTabla() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const clasificacion = document.getElementById('filterClasificacion').value;
+    
+    const filtered = tratamientosData.filter(t => {
+        const matchSearch = t.nombre.toLowerCase().includes(searchTerm) || 
+                          t.responsable.toLowerCase().includes(searchTerm);
+        const matchClasif = !clasificacion || t.clasificacion === clasificacion;
+        return matchSearch && matchClasif;
+    });
+    
+    // Actualizar tabla con datos filtrados
+    const tbody = document.getElementById('tratamientosTableBody');
+    tbody.innerHTML = '';
+    
+    filtered.forEach(t => {
+        const row = `
+            <tr>
+                <td>${t.nombre}</td>
+                <td>${t.responsable}</td>
+                <td>${new Date(t.fecha).toLocaleDateString('es-EC')}</td>
+                <td><strong>${t.puntaje}</strong></td>
+                <td><span class="badge ${t.clasificacion}">${t.clasificacion === 'gran-escala' ? 'Gran Escala' : 'No Gran Escala'}</span></td>
+                <td>${t.titulares.toLocaleString()}</td>
+                <td>
+                    <button class="btn-action btn-view" onclick="verDetalle(${t.id})">👁️</button>
+                    <button class="btn-action btn-edit" onclick="editarTratamiento(${t.id})">✏️</button>
+                    <button class="btn-action btn-delete" onclick="eliminarTratamiento(${t.id})">🗑️</button>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// Actualizar alertas
+function actualizarAlertas() {
+    const container = document.getElementById('alertsContainer');
+    container.innerHTML = '';
+    
+    const granEscala = tratamientosData.filter(t => t.clasificacion === 'gran-escala');
+    
+    if (granEscala.length > 0) {
+        container.innerHTML += `
+            <div class="alert alert-danger">
+                <div class="alert-content">
+                    <h4>⚠️ ${granEscala.length} tratamientos de Gran Escala detectados</h4>
+                    <p>Requieren medidas especiales de cumplimiento según Art. 12 de la Resolución</p>
+                </div>
+                <button class="btn-action btn-view" onclick="verGranEscala()">Ver detalles</button>
+            </div>
+        `;
+    }
+    
+    const promedioAlto = tratamientosData.filter(t => t.puntaje > 9).length;
+    if (promedioAlto > 0) {
+        container.innerHTML += `
+            <div class="alert alert-warning">
+                <div class="alert-content">
+                    <h4>📊 ${promedioAlto} tratamientos con puntuación alta (>9)</h4>
+                    <p>Considere revisión prioritaria de medidas de seguridad</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    container.innerHTML += `
+        <div class="alert alert-info">
+            <div class="alert-content">
+                <h4>📅 Próxima revisión anual obligatoria</h4>
+                <p>Según Art. 13, debe actualizar evaluaciones MTGE al menos una vez al año</p>
+            </div>
+        </div>
+    `;
+}
+
+// Actualizar cumplimiento
+function actualizarCumplimiento() {
+    const granEscala = tratamientosData.filter(t => t.clasificacion === 'gran-escala').length;
+    
+    document.getElementById('obligacionesActivas').textContent = granEscala;
+    document.getElementById('eipdRequeridas').textContent = granEscala;
+    document.getElementById('dpdRequeridos').textContent = granEscala;
+    document.getElementById('ratRequeridos').textContent = granEscala;
+    
+    // Detalle de obligaciones
+    const detalleContainer = document.getElementById('obligacionesDetalle');
+    detalleContainer.innerHTML = '';
+    
+    tratamientosData.filter(t => t.clasificacion === 'gran-escala').forEach(t => {
+        detalleContainer.innerHTML += `
+            <div class="obligation-item">
+                <h4>${t.nombre}</h4>
+                <p><strong>Obligaciones:</strong></p>
+                <ul>
+                    <li>✓ Realizar Evaluación de Impacto (EIPD)</li>
+                    <li>✓ Designar Delegado de Protección de Datos</li>
+                    <li>✓ Incorporar al Registro de Actividades (RAT)</li>
+                    <li>✓ Aplicar medidas reforzadas de responsabilidad</li>
+                </ul>
+            </div>
+        `;
+    });
+}
+
+// Actualizar riesgos
+function actualizarRiesgos() {
+    const alto = tratamientosData.filter(t => t.puntaje >= 10).length;
+    const medio = tratamientosData.filter(t => t.puntaje >= 6 && t.puntaje < 10).length;
+    const bajo = tratamientosData.filter(t => t.puntaje < 6).length;
+    
+    document.getElementById('riskHigh').textContent = alto;
+    document.getElementById('riskMedium').textContent = medio;
+    document.getElementById('riskLow').textContent = bajo;
+    
+    // Gráfico de análisis de riesgo
+    const ctx = document.getElementById('riskAnalysisChart');
+    if (charts.riskAnalysis) charts.riskAnalysis.destroy();
+    
+    charts.riskAnalysis = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Riesgo Alto', 'Riesgo Medio', 'Riesgo Bajo'],
+            datasets: [{
+                label: 'Número de Tratamientos',
+                data: [alto, medio, bajo],
+                backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+    
+    // Recomendaciones
+    const recsContainer = document.getElementById('recommendationsContainer');
+    recsContainer.innerHTML = '';
+    
+    if (alto > 0) {
+        recsContainer.innerHTML += `
+            <div class="alert alert-danger">
+                <div class="alert-content">
+                    <h4>Tratamientos de Alto Riesgo</h4>
+                    <p><strong>Recomendaciones:</strong></p>
+                    <ul>
+                        <li>Realizar EIPD inmediatamente</li>
+                        <li>Implementar controles de seguridad reforzados</li>
+                        <li>Revisión trimestral obligatoria</li>
+                        <li>Documentación exhaustiva de todas las operaciones</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Llenar selectores de comparación
+function llenarComparadores() {
+    const select1 = document.getElementById('compare1');
+    const select2 = document.getElementById('compare2');
+    
+    select1.innerHTML = '<option value="">Seleccionar tratamiento 1</option>';
+    select2.innerHTML = '<option value="">Seleccionar tratamiento 2</option>';
+    
+    tratamientosData.forEach(t => {
+        select1.innerHTML += `<option value="${t.id}">${t.nombre}</option>`;
+        select2.innerHTML += `<option value="${t.id}">${t.nombre}</option>`;
+    });
+}
+
+// Actualizar comparación
+function actualizarComparacion() {
+    const id1 = parseInt(document.getElementById('compare1').value);
+    const id2 = parseInt(document.getElementById('compare2').value);
+    
+    if (!id1 || !id2) {
+        document.getElementById('comparisonResult').innerHTML = '<p class="placeholder-text">Selecciona dos tratamientos para compararlos</p>';
+        return;
+    }
+    
+    const t1 = tratamientosData.find(t => t.id === id1);
+    const t2 = tratamientosData.find(t => t.id === id2);
+    
+    document.getElementById('comparisonResult').innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h3>${t1.nombre}</h3>
+                <p><strong>Puntuación:</strong> ${t1.puntaje}</p>
+                <p><strong>Clasificación:</strong> ${t1.clasificacion === 'gran-escala' ? 'Gran Escala' : 'No Gran Escala'}</p>
+                <p><strong>Titulares:</strong> ${t1.titulares.toLocaleString()}</p>
+                <p><strong>Volumen datos:</strong> ${t1.volumen}</p>
+            </div>
+            <div>
+                <h3>${t2.nombre}</h3>
+                <p><strong>Puntuación:</strong> ${t2.puntaje}</p>
+                <p><strong>Clasificación:</strong> ${t2.clasificacion === 'gran-escala' ? 'Gran Escala' : 'No Gran Escala'}</p>
+                <p><strong>Titulares:</strong> ${t2.titulares.toLocaleString()}</p>
+                <p><strong>Volumen datos:</strong> ${t2.volumen}</p>
+            </div>
+        </div>
+        <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <h4>Análisis Comparativo:</h4>
+            <p><strong>Diferencia de puntuación:</strong> ${Math.abs(t1.puntaje - t2.puntaje).toFixed(1)} puntos</p>
+            <p>${t1.puntaje > t2.puntaje ? t1.nombre : t2.nombre} tiene mayor puntuación y representa mayor riesgo.</p>
+        </div>
+    `;
+}
+
+// Ver detalle de tratamiento
+function verDetalle(id) {
+    const t = tratamientosData.find(tr => tr.id === id);
+    if (!t) return;
+    
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+        <h2>${t.nombre}</h2>
+        <hr style="margin: 15px 0;">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h3>Información General</h3>
+                <p><strong>Responsable:</strong> ${t.responsable}</p>
+                <p><strong>Fecha:</strong> ${new Date(t.fecha).toLocaleDateString('es-EC')}</p>
+                <p><strong>Clasificación:</strong> <span class="badge ${t.clasificacion}">${t.clasificacion === 'gran-escala' ? 'Gran Escala' : 'No Gran Escala'}</span></p>
+            </div>
+            
+            <div>
+                <h3>Puntuación MTGE</h3>
+                <p><strong>Puntuación Total:</strong> ${t.puntaje} puntos</p>
+                <p style="color: ${t.puntaje >= 6 ? '#ef4444' : '#10b981'};">
+                    ${t.puntaje >= 6 ? '⚠️ Supera el umbral de 6 puntos' : '✅ No supera el umbral'}
+                </p>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 20px;">Desglose por Variables</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Variable</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Valor</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Puntos</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Número de Titulares</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.titulares.toLocaleString()}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${calcularPuntosTitulares(t.titulares)}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Volumen de Datos</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.volumen} tipos</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${calcularPuntosVolumen(t.volumen)}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Categorías de Datos</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">-</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.categorias}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Frecuencia</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">-</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.frecuencia}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Permanencia</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">-</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.permanencia}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Geografía</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">-</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${t.geografia}</td>
+            </tr>
+        </table>
+        
+        ${t.clasificacion === 'gran-escala' ? `
+            <div style="margin-top: 20px; padding: 15px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px;">
+                <h4>⚠️ Obligaciones Legales Aplicables</h4>
+                <ul>
+                    <li>Realizar Evaluación de Impacto en la Protección de Datos (EIPD)</li>
+                    <li>Designar Delegado de Protección de Datos (DPD)</li>
+                    <li>Incorporar al Registro de Actividades de Tratamiento (RAT)</li>
+                    <li>Aplicar medidas reforzadas de responsabilidad proactiva</li>
+                    <li>Revisar y actualizar anualmente</li>
+                </ul>
+            </div>
+        ` : ''}
+    `;
+    
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+function cerrarModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+// Funciones de acción
+function editarTratamiento(id) {
+    alert('Función de edición en desarrollo. Redirigir a formulario MTGE con datos precargados.');
+}
+
+function eliminarTratamiento(id) {
+    if (confirm('¿Está seguro de eliminar este tratamiento?')) {
+        tratamientosData = tratamientosData.filter(t => t.id !== id);
+        cargarDatos();
+        alert('Tratamiento eliminado exitosamente');
+    }
+}
+
+function verGranEscala() {
+    document.getElementById('filterClasificacion').value = 'gran-escala';
+    cambiarSeccion('treatments');
+    filtrarTabla();
+}
+
+// Exportar tabla a CSV
+function exportarTabla() {
+    let csv = 'Tratamiento,Responsable,Fecha,Puntuación,Clasificación,Titulares\n';
+    
+    tratamientosData.forEach(t => {
+        csv += `"${t.nombre}","${t.responsable}","${t.fecha}",${t.puntaje},"${t.clasificacion}",${t.titulares}\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tratamientos_mtge_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+}
+
+// Filtrar por período
+function filtrarPorPeriodo() {
+    const periodo = document.getElementById('periodFilter').value;
+    // Implementar filtrado por período
+    console.log('Filtrar por período:', periodo);
+}
+
+// Descargar gráfico
+function descargarGrafico(chartId) {
+    const canvas = document.getElementById(chartId);
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grafico_${chartId}_${new Date().toISOString().split('T')[0]}.png`;
+    a.click();
+}
+
+// Funciones de generación de reportes
+function generarReporteEjecutivo() {
+    alert('Generando Reporte Ejecutivo en PDF...\n\nEste reporte incluirá:\n- KPIs principales\n- Gráficos de tendencias\n- Resumen de cumplimiento\n- Recomendaciones ejecutivas');
+}
+
+function generarReporteCumplimiento() {
+    alert('Generando Reporte de Cumplimiento en PDF...\n\nEste reporte incluirá:\n- Estado de obligaciones legales\n- Tratamientos de Gran Escala\n- Acciones requeridas\n- Timeline de cumplimiento');
+}
+
+function generarReporteRiesgos() {
+    alert('Generando Reporte de Riesgos en PDF...\n\nEste reporte incluirá:\n- Matriz de riesgos\n- Análisis por tratamiento\n- Recomendaciones de mitigación\n- Plan de acción');
+}
+
+function generarReporteTendencias() {
+    alert('Generando Reporte de Tendencias en PDF...\n\nEste reporte incluirá:\n- Evolución temporal\n- Análisis predictivo\n- Comparativas período a período\n- Proyecciones');
+}
+
+function exportarExcel() {
+    alert('Exportando base de datos completa a Excel...\n\nEl archivo incluirá:\n- Todos los tratamientos\n- Desglose completo de variables\n- Cálculos MTGE\n- Metadata adicional');
+}
+
+function configurarReporteProgramado() {
+    alert('Configuración de Reportes Programados\n\nCaracterísticas:\n- Envío automático por email\n- Frecuencia configurable\n- Múltiples destinatarios\n- Personalización de contenido');
+}
+
+// Importar datos
+function importarDatos() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.csv';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                tratamientosData = data;
+                cargarDatos();
+                alert('✅ Datos importados exitosamente');
+            } catch (error) {
+                alert('❌ Error al importar datos. Verifique el formato del archivo.');
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// Cerrar modal al hacer click fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+console.log('✅ Dashboard MTGE cargado exitosamente');
+
+
+// ── Cargar desde localStorage además de datos demo ──
+const _origCargarDatosDemo = cargarDatosDemo;
+function cargarDatosDemo() {
+  _origCargarDatosDemo();
+  const guardados = JSON.parse(localStorage.getItem('mtge_tratamientos') || '[]');
+  // Agrega los guardados evitando duplicar IDs de demo
+  const demoIds = new Set(tratamientosData.map(t => t.id));
+  guardados.forEach(t => {
+    if (!demoIds.has(t.id)) tratamientosData.push(t);
+  });
+}
+
+// Filtrar por periodo (stub si no existe)
+if (typeof filtrarPorPeriodo !== 'function') {
+  function filtrarPorPeriodo() { cargarDatos(); }
+}
+
+// Limpiar registro
+function limpiarRegistro() {
+  if (confirm('¿Eliminar TODOS los tratamientos guardados (solo los guardados por usted, los de demostración volverán)?')) {
+    localStorage.removeItem('mtge_tratamientos');
+    location.reload();
+  }
+}
+
+// Exportar JSON
+function exportarJSON() {
+  const data = JSON.stringify(tratamientosData, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'mtge_registro.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Importar datos JSON
+function importarDatos() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const importados = JSON.parse(ev.target.result);
+        if (!Array.isArray(importados)) throw new Error('Formato inválido');
+        localStorage.setItem('mtge_tratamientos', JSON.stringify(importados));
+        alert('✅ Datos importados correctamente.');
+        location.reload();
+      } catch(err) {
+        alert('❌ Error al importar: ' + err.message);
+      }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+// Descargar gráfico como imagen
+function descargarGrafico(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = canvasId + '.png';
+  a.click();
+}
+
+// Sort tabla
+function sortTable(colIdx) {
+  const tbody = document.getElementById('tratamientosTableBody');
+  const rows  = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((a, b) => {
+    const aText = a.cells[colIdx]?.textContent?.trim() || '';
+    const bText = b.cells[colIdx]?.textContent?.trim() || '';
+    const aNum  = parseFloat(aText);
+    const bNum  = parseFloat(bText);
+    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    return aText.localeCompare(bText);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+// verGranEscala
+function verGranEscala() {
+  document.querySelector('[data-section="treatments"]').click();
+  document.getElementById('filterClasificacion').value = 'gran-escala';
+  filtrarTabla();
+}
+
+// cerrarModal
+function cerrarModal() {
+  document.getElementById('detailModal').style.display = 'none';
+}
+
+// verDetalle mejorado
+function verDetalle(id) {
+  const t = tratamientosData.find(x => x.id === id);
+  if (!t) return;
+  const isGE = t.clasificacion === 'gran-escala';
+  document.getElementById('modalBody').innerHTML = `
+    <h2>📋 ${t.nombre}</h2>
+    <p><strong>Responsable:</strong> ${t.responsable}</p>
+    <p><strong>Fecha:</strong> ${new Date(t.fecha).toLocaleDateString('es-EC')}</p>
+    ${t.finalidad  ? '<p><strong>Finalidad:</strong> '+t.finalidad+'</p>'   : ''}
+    ${t.departamento ? '<p><strong>Depto:</strong> '+t.departamento+'</p>'  : ''}
+    ${t.evaluador  ? '<p><strong>Evaluador:</strong> '+t.evaluador+'</p>'   : ''}
+    ${t.numeroRAT  ? '<p><strong>RAT N.º:</strong> '+t.numeroRAT+'</p>'     : ''}
+    <hr style="margin:16px 0;">
+    <table style="width:100%;border-collapse:collapse;">
+      <tr style="background:#f3f4f6;"><th style="padding:8px;text-align:left;">Variable</th><th style="padding:8px;">Puntos</th></tr>
+      <tr><td style="padding:8px;">👥 Titulares (${t.titulares.toLocaleString()})</td><td style="padding:8px;text-align:center;">${calcularPuntosTitulares(t.titulares)}</td></tr>
+      <tr><td style="padding:8px;">📊 Volumen (${t.volumen} tipos)</td><td style="padding:8px;text-align:center;">${calcularPuntosVolumen(t.volumen)}</td></tr>
+      <tr><td style="padding:8px;">🔐 Categorías</td><td style="padding:8px;text-align:center;">${t.categorias}</td></tr>
+      <tr><td style="padding:8px;">⏱️ Frecuencia</td><td style="padding:8px;text-align:center;">${t.frecuencia}</td></tr>
+      <tr><td style="padding:8px;">📅 Permanencia</td><td style="padding:8px;text-align:center;">${t.permanencia}</td></tr>
+      <tr><td style="padding:8px;">🌍 Geografía</td><td style="padding:8px;text-align:center;">${t.geografia}</td></tr>
+      <tr style="font-weight:700;background:${isGE?'#fee2e2':'#d1fae5'};">
+        <td style="padding:10px;">TOTAL (P)</td>
+        <td style="padding:10px;text-align:center;font-size:1.4rem;">${t.puntaje}</td>
+      </tr>
+    </table>
+    <div style="margin-top:16px;padding:16px;border-radius:8px;
+                background:${isGE?'#fee2e2':'#d1fae5'};
+                border:2px solid ${isGE?'#ef4444':'#10b981'};">
+      <strong style="color:${isGE?'#dc2626':'#059669'};">
+        ${isGE ? '🚨 TRATAMIENTO DE GRAN ESCALA' : '✅ NO ES TRATAMIENTO DE GRAN ESCALA'}
+      </strong>
+    </div>
+  `;
+  document.getElementById('detailModal').style.display = 'block';
+}
+
+// editarTratamiento stub
+function editarTratamiento(id) {
+  alert('Para editar, descargue el JSON, modifíquelo e impórtelo de nuevo.');
+}
+
+// eliminarTratamiento
+function eliminarTratamiento(id) {
+  if (!confirm('¿Eliminar este tratamiento del registro?')) return;
+  tratamientosData = tratamientosData.filter(t => t.id !== id);
+  // Si fue guardado en localStorage, actualizar
+  const guardados = JSON.parse(localStorage.getItem('mtge_tratamientos') || '[]')
+                      .filter(t => t.id !== id);
+  localStorage.setItem('mtge_tratamientos', JSON.stringify(guardados));
+  cargarDatos();
+}
+
+// Reportes PDF simples
+function generarReporteEjecutivo() {
+  const total = tratamientosData.length;
+  const ge = tratamientosData.filter(t=>t.clasificacion==='gran-escala').length;
+  const prom = (tratamientosData.reduce((s,t)=>s+t.puntaje,0)/total||0).toFixed(1);
+  const w = window.open('','_blank');
+  w.document.write(`<html><body style="font-family:Arial;padding:40px;">
+    <h1 style="color:#2563eb;">Reporte Ejecutivo MTGE</h1>
+    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-EC')}</p>
+    <hr><h2>Resumen</h2>
+    <p>Total tratamientos: <strong>${total}</strong></p>
+    <p>Gran Escala: <strong>${ge} (${total?Math.round(ge/total*100):0}%)</strong></p>
+    <p>Puntuación promedio: <strong>${prom}</strong></p>
+    <hr><h2>Tratamientos de Gran Escala</h2>
+    ${tratamientosData.filter(t=>t.clasificacion==='gran-escala').map(t=>`<p>• ${t.nombre} – ${t.puntaje} pts (${t.responsable})</p>`).join('')}
+    <hr><p style="font-size:12px;color:#666;">Base Legal: Resolución SPDP-SPD-2026-0005-R</p>
+  </body></html>`);
+  w.document.close(); w.print();
+}
+
+function generarReporteCumplimiento() {
+  const ge = tratamientosData.filter(t=>t.clasificacion==='gran-escala');
+  const w = window.open('','_blank');
+  w.document.write(`<html><body style="font-family:Arial;padding:40px;">
+    <h1 style="color:#2563eb;">Reporte de Cumplimiento MTGE</h1>
+    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-EC')}</p>
+    <hr>
+    ${ge.map(t=>`
+      <h3>${t.nombre}</h3>
+      <p><strong>Puntaje:</strong> ${t.puntaje} | <strong>Clasificación:</strong> GRAN ESCALA</p>
+      <p><strong>Obligaciones (Art. 12):</strong></p>
+      <ul><li>EIPD requerida</li><li>Designar DPD</li>
+          <li>Incorporar al RAT</li><li>Accountability reforzado</li>
+          <li>Revisión anual (Art. 13)</li><li>Conservar evidencia 5 años</li></ul><hr>
+    `).join('')}
+    <p style="font-size:12px;color:#666;">Base Legal: Resolución SPDP-SPD-2026-0005-R</p>
+  </body></html>`);
+  w.document.close(); w.print();
+}
+
+function generarReporteRiesgos() {
+  const alto = tratamientosData.filter(t=>t.puntaje>=10);
+  const medio= tratamientosData.filter(t=>t.puntaje>=6&&t.puntaje<10);
+  const bajo = tratamientosData.filter(t=>t.puntaje<6);
+  const w = window.open('','_blank');
+  w.document.write(`<html><body style="font-family:Arial;padding:40px;">
+    <h1 style="color:#2563eb;">Reporte de Riesgos MTGE</h1>
+    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-EC')}</p>
+    <hr>
+    <h2 style="color:#dc2626;">Riesgo Alto (${alto.length})</h2>
+    ${alto.map(t=>`<p>• ${t.nombre} – ${t.puntaje} pts</p>`).join('')||'<p>Ninguno</p>'}
+    <h2 style="color:#d97706;">Riesgo Medio (${medio.length})</h2>
+    ${medio.map(t=>`<p>• ${t.nombre} – ${t.puntaje} pts</p>`).join('')||'<p>Ninguno</p>'}
+    <h2 style="color:#059669;">Riesgo Bajo (${bajo.length})</h2>
+    ${bajo.map(t=>`<p>• ${t.nombre} – ${t.puntaje} pts</p>`).join('')||'<p>Ninguno</p>'}
+    <hr><p style="font-size:12px;color:#666;">Base Legal: Resolución SPDP-SPD-2026-0005-R</p>
+  </body></html>`);
+  w.document.close(); w.print();
+}
+
+// exportar tabla CSV
+function exportarTabla() {
+  const rows = [['Nombre','Responsable','Fecha','Puntuación','Clasificación','Titulares']];
+  tratamientosData.forEach(t => rows.push([t.nombre,t.responsable,t.fecha,t.puntaje,t.clasificacion,t.titulares]));
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='mtge_tratamientos.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// configurarReporteProgramado stub
+function configurarReporteProgramado() {
+  alert('Funcionalidad de reportes programados disponible en la versión empresarial.');
+}
+
+// exportarExcel stub
+function exportarExcel() { exportarJSON(); }
+  </script>
+</body>
+</html>
