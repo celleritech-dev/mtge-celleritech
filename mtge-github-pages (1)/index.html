@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTGE – Matriz de Tratamiento a Gran Escala | LOPDP Ecuador</title>
+  <style>
+/* MTGE - Estilos Generales */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f9fafb;
+    --border-color: #e5e7eb;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.logo-section h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin-bottom: 5px;
+}
+
+.resolution {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    font-weight: 300;
+}
+
+/* Info Banner */
+.info-banner {
+    background: #dbeafe;
+    border-left: 4px solid var(--primary-color);
+    padding: 15px 30px;
+    margin: 0;
+    color: var(--text-dark);
+}
+
+/* Form Sections */
+form {
+    padding: 30px;
+}
+
+.form-section {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.form-section h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.variable-description {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Radio Groups */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.radio-label:hover {
+    border-color: var(--primary-color);
+    background: #f0f9ff;
+}
+
+.radio-label input[type="radio"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"]:checked + span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.radio-label span {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* Scoring Tables */
+.scoring-table {
+    margin: 20px 0;
+}
+
+.scoring-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.scoring-table th,
+.scoring-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.scoring-table thead {
+    background: var(--primary-color);
+    color: white;
+}
+
+.scoring-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scoring-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.scoring-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+/* Result Boxes */
+.result-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+.result-box .score {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Result Section */
+.result-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid var(--primary-color);
+}
+
+.final-score {
+    margin: 25px 0;
+}
+
+.score-breakdown {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.score-breakdown h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.score-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.score-breakdown td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.score-breakdown tr:last-child td {
+    border-bottom: none;
+}
+
+.score-breakdown td:last-child {
+    text-align: right;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.total-row {
+    border-top: 3px solid var(--primary-color) !important;
+}
+
+.total-row td {
+    padding-top: 15px !important;
+    font-size: 1.2rem !important;
+    color: var(--primary-color) !important;
+}
+
+/* Classification */
+.classification {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.classification-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.classification h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.classification.gran-escala {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border: 3px solid var(--danger-color);
+}
+
+.classification.gran-escala h3 {
+    color: var(--danger-color);
+}
+
+.classification.no-gran-escala {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 3px solid var(--success-color);
+}
+
+.classification.no-gran-escala h3 {
+    color: var(--success-color);
+}
+
+/* Obligations */
+.obligations {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.obligations h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.obligations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.obligations li {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--bg-light);
+    border-left: 4px solid var(--warning-color);
+    border-radius: 4px;
+}
+
+.obligations li::before {
+    content: "✓ ";
+    color: var(--success-color);
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+    background: var(--bg-light);
+    padding: 25px 30px;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+}
+
+footer p {
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.footer-note {
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        border-radius: 12px;
+    }
+
+    header {
+        padding: 30px 20px;
+    }
+
+    .logo-section h1 {
+        font-size: 1.5rem;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .score-breakdown table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+    }
+
+    .button-group {
+        display: none;
+    }
+
+    header {
+        background: var(--primary-color);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-section">
+        <h1>🛡️ MTGE – Matriz de Tratamiento a Gran Escala</h1>
+        <p class="subtitle">Ley Orgánica de Protección de Datos Personales de Ecuador</p>
+        <p class="resolution">Resolución SPDP-SPD-2026-0005-R</p>
+        <p style="margin-top:12px;">
+          <a href="dashboard.html"
+             style="background:rgba(255,255,255,.2);color:#fff;text-decoration:none;
+                    padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.5);
+                    font-weight:600;">
+            📊 Ver Dashboard →
+          </a>
+        </p>
+      </div>
+    </header>
+
+    <div class="info-banner">
+      <strong>ℹ️ Importante:</strong> Un tratamiento se considera de
+      <strong>gran escala</strong> cuando el puntaje total es <strong>≥ 6 puntos</strong>
+    </div>
+
+    <form id="mtgeForm">
+      <!-- Información General -->
+      <section class="form-section">
+        <h2>📋 Información General del Tratamiento</h2>
+        <div class="form-group">
+          <label for="nombreTratamiento">Nombre del Tratamiento *</label>
+          <input type="text" id="nombreTratamiento" required
+                 placeholder="Ej: Gestión de Recursos Humanos">
+        </div>
+        <div class="form-group">
+          <label for="responsable">Responsable del Tratamiento *</label>
+          <input type="text" id="responsable" required
+                 placeholder="Nombre de la organización o área">
+        </div>
+        <div class="form-group">
+          <label for="finalidad">Finalidad del Tratamiento *</label>
+          <textarea id="finalidad" required rows="3"
+                    placeholder="Describa la finalidad del tratamiento de datos"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fechaEvaluacion">Fecha de Evaluación *</label>
+          <input type="date" id="fechaEvaluacion" required>
+        </div>
+        <div class="form-group">
+          <label for="departamento">Departamento / Área (opcional)</label>
+          <input type="text" id="departamento" placeholder="Ej: Recursos Humanos, TI, Marketing">
+        </div>
+        <div class="form-group">
+          <label for="evaluador">Evaluador (opcional)</label>
+          <input type="text" id="evaluador" placeholder="Nombre del responsable de la evaluación">
+        </div>
+        <div class="form-group">
+          <label for="numeroRAT">N.º de Registro RAT (opcional)</label>
+          <input type="text" id="numeroRAT" placeholder="Número en el Registro de Actividades">
+        </div>
+      </section>
+
+      <!-- Variable 1 -->
+      <section class="form-section">
+        <h2>👥 Variable 1: Número de Titulares (12 meses)</h2>
+        <p class="variable-description">
+          Número de personas físicas cuyos datos personales son objeto del tratamiento
+          en un periodo de 12 meses. Cada titular se cuenta una sola vez.
+        </p>
+        <div class="form-group">
+          <label for="numTitulares">Número aproximado de titulares *</label>
+          <input type="number" id="numTitulares" required min="0" placeholder="Ej: 5000">
+        </div>
+        <div class="scoring-table">
+          <table>
+            <thead><tr><th>Rango</th><th>Puntos</th></tr></thead>
+            <tbody>
+              <tr><td>0 – 1.000</td><td>1 punto</td></tr>
+              <tr><td>1.001 – 10.000</td><td>2 puntos</td></tr>
+              <tr><td>10.001 – 100.000</td><td>3 puntos</td></tr>
+              <tr><td>&gt; 100.001</td><td>4 puntos</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 1:</span>
+          <span class="score" id="scoreTitulares">0</span>
+        </div>
+      </section>
+
+      <!-- Variable 2 -->
+      <section class="form-section">
+        <h2>📊 Variable 2: Volumen de Datos Personales</h2>
+        <p class="variable-description">
+          Cantidad total de tipos de datos personales diferentes por cada titular.
+        </p>
+        <div class="form-group">
+          <label for="volumenDatos">Número de tipos de datos por titular *</label>
+          <input type="number" id="volumenDatos" required min="1" placeholder="Ej: 25">
+        </div>
+        <div class="scoring-table">
+          <table>
+            <thead><tr><th>Rango</th><th>Puntos</th></tr></thead>
+            <tbody>
+              <tr><td>Hasta 10 tipos</td><td>0,5 puntos</td></tr>
+              <tr><td>11 – 30 tipos</td><td>1 punto</td></tr>
+              <tr><td>31 – 100 tipos</td><td>2 puntos</td></tr>
+              <tr><td>&gt; 101 tipos</td><td>3 puntos</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 2:</span>
+          <span class="score" id="scoreVolumen">0</span>
+        </div>
+      </section>
+
+      <!-- Variable 3 -->
+      <section class="form-section">
+        <h2>🔐 Variable 3: Categorías de Datos Personales</h2>
+        <p class="variable-description">
+          Clasificación según la naturaleza y sensibilidad de los datos tratados.
+        </p>
+        <div class="form-group">
+          <label>Tipo de datos tratados *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="categorias" value="0.5" required>
+              <span><strong>0,5 pts –</strong> Solo datos básicos (nombre, dirección, email, teléfono, etc.)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="categorias" value="2">
+              <span><strong>2 pts –</strong> Al menos una categoría especial (salud, orientación sexual, ideología política, religión, origen étnico, datos biométricos o genéticos)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="categorias" value="3">
+              <span><strong>3 pts –</strong> Más de una categoría especial, grupos vulnerables (niños, adultos mayores, personas con discapacidad) o datos penales</span>
+            </label>
+          </div>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 3:</span>
+          <span class="score" id="scoreCategorias">0</span>
+        </div>
+      </section>
+
+      <!-- Variable 4 -->
+      <section class="form-section">
+        <h2>⏱️ Variable 4: Frecuencia del Tratamiento</h2>
+        <p class="variable-description">
+          Regularidad con la que se ejecutan operaciones de tratamiento de datos.
+        </p>
+        <div class="form-group">
+          <label>Frecuencia del tratamiento *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="frecuencia" value="0.5" required>
+              <span><strong>0,5 pts –</strong> Puntual – Una sola vez o de manera excepcional</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="frecuencia" value="1">
+              <span><strong>1 pt –</strong> Periódica/Recurrente – A intervalos regulares (semanal, mensual, trimestral)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="frecuencia" value="2">
+              <span><strong>2 pts –</strong> Continua – En tiempo real o de manera permanente y constante</span>
+            </label>
+          </div>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 4:</span>
+          <span class="score" id="scoreFrecuencia">0</span>
+        </div>
+      </section>
+
+      <!-- Variable 5 -->
+      <section class="form-section">
+        <h2>📅 Variable 5: Permanencia del Tratamiento</h2>
+        <p class="variable-description">
+          Duración prevista del tratamiento activo de los datos personales.
+        </p>
+        <div class="form-group">
+          <label>Permanencia del tratamiento *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="permanencia" value="0.5" required>
+              <span><strong>0,5 pts –</strong> Ocasional – Menos de 1 año</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="permanencia" value="1">
+              <span><strong>1 pt –</strong> Temporal – Entre 1 y menos de 3 años</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="permanencia" value="2">
+              <span><strong>2 pts –</strong> Prolongada – 3 años o más</span>
+            </label>
+          </div>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 5:</span>
+          <span class="score" id="scorePermanencia">0</span>
+        </div>
+      </section>
+
+      <!-- Variable 6 -->
+      <section class="form-section">
+        <h2>🌍 Variable 6: Alcance Geográfico</h2>
+        <p class="variable-description">
+          Extensión territorial del impacto del tratamiento de datos.
+        </p>
+        <div class="form-group">
+          <label>Alcance geográfico del tratamiento *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="geografia" value="1" required>
+              <span><strong>1 pt –</strong> Local – Limitado a una provincia, cantón o localidad específica</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="geografia" value="2">
+              <span><strong>2 pts –</strong> Nacional – Abarca varias provincias o todo el territorio ecuatoriano</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="geografia" value="3">
+              <span><strong>3 pts –</strong> Transfronterizo/Global – Incluye transferencias internacionales o tratamiento en múltiples países</span>
+            </label>
+          </div>
+        </div>
+        <div class="result-box">
+          <span>Puntuación Variable 6:</span>
+          <span class="score" id="scoreGeografia">0</span>
+        </div>
+      </section>
+
+      <!-- Resultado -->
+      <section class="form-section result-section">
+        <h2>🎯 Resultado de la Evaluación MTGE</h2>
+        <div class="final-score">
+          <div class="score-breakdown">
+            <h3>Desglose de Puntuación</h3>
+            <table>
+              <tr><td>Variable 1 – Número de Titulares:</td><td><strong id="finalScoreTitulares">0</strong></td></tr>
+              <tr><td>Variable 2 – Volumen de Datos:</td><td><strong id="finalScoreVolumen">0</strong></td></tr>
+              <tr><td>Variable 3 – Categorías de Datos:</td><td><strong id="finalScoreCategorias">0</strong></td></tr>
+              <tr><td>Variable 4 – Frecuencia:</td><td><strong id="finalScoreFrecuencia">0</strong></td></tr>
+              <tr><td>Variable 5 – Permanencia:</td><td><strong id="finalScorePermanencia">0</strong></td></tr>
+              <tr><td>Variable 6 – Alcance Geográfico:</td><td><strong id="finalScoreGeografia">0</strong></td></tr>
+              <tr class="total-row">
+                <td><strong>PUNTUACIÓN TOTAL (P):</strong></td>
+                <td><strong id="totalScore">0</strong></td>
+              </tr>
+            </table>
+          </div>
+          <div class="classification" id="classification">
+            <div class="classification-icon">⚖️</div>
+            <h3>Complete el formulario</h3>
+            <p>Ingrese todos los datos requeridos para obtener la clasificación</p>
+          </div>
+          <div class="obligations" id="obligations" style="display:none;">
+            <h3>📋 Obligaciones Derivadas (Art. 12 Resolución SPDP-SPD-2026-0005-R)</h3>
+            <ul id="obligationsList"></ul>
+          </div>
+        </div>
+        <div class="button-group">
+          <button type="button" class="btn btn-primary"    onclick="calculateScore()">🧮 Calcular Puntuación</button>
+          <button type="button" class="btn btn-primary"
+                  style="background:#10b981;border-color:#10b981;"
+                  onclick="guardarEnRegistro()">💾 Guardar en Registro</button>
+          <button type="button" class="btn btn-secondary"  onclick="exportPDF()">📄 Exportar PDF</button>
+          <button type="button" class="btn btn-secondary"  onclick="resetForm()">🔄 Nueva Evaluación</button>
+        </div>
+      </section>
+    </form>
+
+    <footer>
+      <p><strong>Base Legal:</strong> Resolución SPDP-SPD-2026-0005-R |
+         Superintendencia de Protección de Datos Personales de Ecuador</p>
+      <p><a href="https://www.datospersonales.gob.ec/" target="_blank"
+            style="color:#2563eb;">www.datospersonales.gob.ec</a></p>
+      <p class="footer-note">Esta aplicación es una herramienta de apoyo técnico.
+         Para consultas oficiales, diríjase a la SPDP.</p>
+    </footer>
+  </div>
+
+  <script>
+// MTGE - Cálculo y Gestión de Puntuación
+
+// Función para calcular puntuación de titulares
+function calculateTitularesScore(numTitulares) {
+    if (numTitulares <= 1000) return 1;
+    if (numTitulares <= 10000) return 2;
+    if (numTitulares <= 100000) return 3;
+    return 4;
+}
+
+// Función para calcular puntuación de volumen
+function calculateVolumenScore(volumen) {
+    if (volumen <= 10) return 0.5;
+    if (volumen <= 30) return 1;
+    if (volumen <= 100) return 2;
+    return 3;
+}
+
+// Actualizar puntuación en tiempo real
+document.getElementById('numTitulares').addEventListener('input', function() {
+    const value = parseInt(this.value) || 0;
+    const score = calculateTitularesScore(value);
+    document.getElementById('scoreTitulares').textContent = score;
+});
+
+document.getElementById('volumenDatos').addEventListener('input', function() {
+    const value = parseInt(this.value) || 0;
+    const score = calculateVolumenScore(value);
+    document.getElementById('scoreVolumen').textContent = score;
+});
+
+// Actualizar puntuaciones de radio buttons
+document.querySelectorAll('input[name="categorias"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('scoreCategorias').textContent = this.value;
+    });
+});
+
+document.querySelectorAll('input[name="frecuencia"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('scoreFrecuencia').textContent = this.value;
+    });
+});
+
+document.querySelectorAll('input[name="permanencia"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('scorePermanencia').textContent = this.value;
+    });
+});
+
+document.querySelectorAll('input[name="geografia"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('scoreGeografia').textContent = this.value;
+    });
+});
+
+// Función principal de cálculo
+function calculateScore() {
+    // Validar formulario
+    const form = document.getElementById('mtgeForm');
+    if (!form.checkValidity()) {
+        alert('⚠️ Por favor, complete todos los campos obligatorios antes de calcular.');
+        form.reportValidity();
+        return;
+    }
+
+    // Obtener valores
+    const numTitulares = parseInt(document.getElementById('numTitulares').value) || 0;
+    const volumenDatos = parseInt(document.getElementById('volumenDatos').value) || 0;
+    const categorias = parseFloat(document.querySelector('input[name="categorias"]:checked')?.value || 0);
+    const frecuencia = parseFloat(document.querySelector('input[name="frecuencia"]:checked')?.value || 0);
+    const permanencia = parseFloat(document.querySelector('input[name="permanencia"]:checked')?.value || 0);
+    const geografia = parseFloat(document.querySelector('input[name="geografia"]:checked')?.value || 0);
+
+    // Calcular puntuaciones
+    const scoreTitulares = calculateTitularesScore(numTitulares);
+    const scoreVolumen = calculateVolumenScore(volumenDatos);
+
+    // Actualizar desglose
+    document.getElementById('finalScoreTitulares').textContent = scoreTitulares;
+    document.getElementById('finalScoreVolumen').textContent = scoreVolumen;
+    document.getElementById('finalScoreCategorias').textContent = categorias;
+    document.getElementById('finalScoreFrecuencia').textContent = frecuencia;
+    document.getElementById('finalScorePermanencia').textContent = permanencia;
+    document.getElementById('finalScoreGeografia').textContent = geografia;
+
+    // Calcular total
+    const totalScore = scoreTitulares + scoreVolumen + categorias + frecuencia + permanencia + geografia;
+    document.getElementById('totalScore').textContent = totalScore.toFixed(1);
+
+    // Determinar clasificación
+    const classification = document.getElementById('classification');
+    const isGranEscala = totalScore >= 6;
+
+    if (isGranEscala) {
+        classification.className = 'classification gran-escala';
+        classification.innerHTML = `
+            <div class="classification-icon">🚨</div>
+            <h3>TRATAMIENTO DE GRAN ESCALA</h3>
+            <p>El tratamiento supera el umbral de 6 puntos y es considerado de <strong>GRAN ESCALA</strong> según el Art. 10 de la Resolución SPDP-SPD-2026-0005-R.</p>
+        `;
+        
+        // Mostrar obligaciones
+        const obligations = document.getElementById('obligations');
+        obligations.style.display = 'block';
+        const obligationsList = document.getElementById('obligationsList');
+        obligationsList.innerHTML = `
+            <li><strong>Evaluación de Impacto:</strong> Debe realizar una Evaluación de Impacto en la Protección de Datos (EIPD) antes de iniciar el tratamiento (Art. 12.1).</li>
+            <li><strong>Delegado de Protección de Datos:</strong> Designación obligatoria de un Delegado de Protección de Datos (DPD) según los requisitos establecidos (Art. 12.2).</li>
+            <li><strong>Registro de Actividades:</strong> Incorporación del tratamiento en el Registro de Actividades de Tratamiento (RAT) con la evidencia del cálculo MTGE (Art. 12.3).</li>
+            <li><strong>Responsabilidad Proactiva Reforzada:</strong> Activación de medidas reforzadas de responsabilidad proactiva (accountability) previstas en la normativa (Art. 12.4).</li>
+            <li><strong>Revisión Periódica:</strong> Revisar y actualizar los valores del MTGE al menos una vez al año o cuando se produzcan variaciones sustanciales (Art. 13).</li>
+            <li><strong>Documentación:</strong> Conservar evidencia documental del cálculo durante al menos 5 años.</li>
+        `;
+    } else {
+        classification.className = 'classification no-gran-escala';
+        classification.innerHTML = `
+            <div class="classification-icon">✅</div>
+            <h3>NO ES TRATAMIENTO DE GRAN ESCALA</h3>
+            <p>El tratamiento NO supera el umbral de 6 puntos. Sin embargo, debe cumplir con las obligaciones generales de la LOPDP y mantener el principio de responsabilidad proactiva.</p>
+        `;
+        
+        // Ocultar obligaciones específicas de gran escala
+        document.getElementById('obligations').style.display = 'none';
+    }
+
+    // Scroll suave al resultado
+    classification.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Función para resetear el formulario
+function resetForm() {
+    if (confirm('¿Está seguro de que desea iniciar una nueva evaluación? Se perderán todos los datos ingresados.')) {
+        document.getElementById('mtgeForm').reset();
+        
+        // Resetear puntuaciones
+        document.getElementById('scoreTitulares').textContent = '0';
+        document.getElementById('scoreVolumen').textContent = '0';
+        document.getElementById('scoreCategorias').textContent = '0';
+        document.getElementById('scoreFrecuencia').textContent = '0';
+        document.getElementById('scorePermanencia').textContent = '0';
+        document.getElementById('scoreGeografia').textContent = '0';
+        
+        document.getElementById('finalScoreTitulares').textContent = '0';
+        document.getElementById('finalScoreVolumen').textContent = '0';
+        document.getElementById('finalScoreCategorias').textContent = '0';
+        document.getElementById('finalScoreFrecuencia').textContent = '0';
+        document.getElementById('finalScorePermanencia').textContent = '0';
+        document.getElementById('finalScoreGeografia').textContent = '0';
+        document.getElementById('totalScore').textContent = '0';
+        
+        // Resetear clasificación
+        const classification = document.getElementById('classification');
+        classification.className = 'classification';
+        classification.innerHTML = `
+            <div class="classification-icon">⚖️</div>
+            <h3 id="classificationTitle">Complete el formulario</h3>
+            <p id="classificationDescription">Ingrese todos los datos requeridos para obtener la clasificación</p>
+        `;
+        
+        document.getElementById('obligations').style.display = 'none';
+        
+        // Scroll al inicio
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// Función para exportar a PDF
+function exportPDF() {
+    // Validar que se haya calculado
+    const totalScore = document.getElementById('totalScore').textContent;
+    if (totalScore === '0') {
+        alert('⚠️ Primero debe calcular la puntuación antes de exportar.');
+        return;
+    }
+
+    // Crear contenido para el PDF
+    const nombreTratamiento = document.getElementById('nombreTratamiento').value;
+    const responsable = document.getElementById('responsable').value;
+    const finalidad = document.getElementById('finalidad').value;
+    const fechaEvaluacion = document.getElementById('fechaEvaluacion').value;
+    const numTitulares = document.getElementById('numTitulares').value;
+    const volumenDatos = document.getElementById('volumenDatos').value;
+    
+    const scoreTitulares = document.getElementById('finalScoreTitulares').textContent;
+    const scoreVolumen = document.getElementById('finalScoreVolumen').textContent;
+    const scoreCategorias = document.getElementById('finalScoreCategorias').textContent;
+    const scoreFrecuencia = document.getElementById('finalScoreFrecuencia').textContent;
+    const scorePermanencia = document.getElementById('finalScorePermanencia').textContent;
+    const scoreGeografia = document.getElementById('finalScoreGeografia').textContent;
+    
+    const isGranEscala = parseFloat(totalScore) >= 6;
+    
+    // Obtener textos de selección
+    const categoriasText = document.querySelector('input[name="categorias"]:checked')?.nextElementSibling?.textContent || '';
+    const frecuenciaText = document.querySelector('input[name="frecuencia"]:checked')?.nextElementSibling?.textContent || '';
+    const permanenciaText = document.querySelector('input[name="permanencia"]:checked')?.nextElementSibling?.textContent || '';
+    const geografiaText = document.querySelector('input[name="geografia"]:checked')?.nextElementSibling?.textContent || '';
+
+    // Crear ventana de impresión con contenido formateado
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte MTGE - ${nombreTratamiento}</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 40px;
+                    line-height: 1.6;
+                    color: #333;
+                }
+                .header {
+                    text-align: center;
+                    border-bottom: 3px solid #2563eb;
+                    padding-bottom: 20px;
+                    margin-bottom: 30px;
+                }
+                .header h1 {
+                    color: #2563eb;
+                    margin-bottom: 10px;
+                }
+                .section {
+                    margin-bottom: 30px;
+                }
+                .section h2 {
+                    color: #2563eb;
+                    border-bottom: 2px solid #e5e7eb;
+                    padding-bottom: 10px;
+                    margin-bottom: 15px;
+                }
+                .info-row {
+                    margin-bottom: 10px;
+                }
+                .info-row strong {
+                    display: inline-block;
+                    width: 200px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                table th, table td {
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }
+                table th {
+                    background-color: #2563eb;
+                    color: white;
+                }
+                .result-box {
+                    padding: 20px;
+                    margin: 20px 0;
+                    border: 3px solid ${isGranEscala ? '#ef4444' : '#10b981'};
+                    background-color: ${isGranEscala ? '#fee2e2' : '#d1fae5'};
+                    text-align: center;
+                }
+                .result-box h3 {
+                    color: ${isGranEscala ? '#ef4444' : '#10b981'};
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                }
+                .obligations {
+                    background-color: #f9fafb;
+                    padding: 20px;
+                    margin-top: 20px;
+                }
+                .obligations li {
+                    margin-bottom: 10px;
+                }
+                .footer {
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #ddd;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>🛡️ MATRIZ DE TRATAMIENTO A GRAN ESCALA (MTGE)</h1>
+                <p>Ley Orgánica de Protección de Datos Personales de Ecuador</p>
+                <p>Resolución SPDP-SPD-2026-0005-R</p>
+            </div>
+
+            <div class="section">
+                <h2>📋 Información General</h2>
+                <div class="info-row"><strong>Tratamiento:</strong> ${nombreTratamiento}</div>
+                <div class="info-row"><strong>Responsable:</strong> ${responsable}</div>
+                <div class="info-row"><strong>Finalidad:</strong> ${finalidad}</div>
+                <div class="info-row"><strong>Fecha de Evaluación:</strong> ${fechaEvaluacion}</div>
+            </div>
+
+            <div class="section">
+                <h2>📊 Evaluación de Variables</h2>
+                
+                <h3>Variable 1: Número de Titulares</h3>
+                <div class="info-row"><strong>Número de titulares (12 meses):</strong> ${numTitulares}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scoreTitulares} puntos</div>
+
+                <h3>Variable 2: Volumen de Datos</h3>
+                <div class="info-row"><strong>Tipos de datos por titular:</strong> ${volumenDatos}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scoreVolumen} puntos</div>
+
+                <h3>Variable 3: Categorías de Datos</h3>
+                <div class="info-row"><strong>Selección:</strong> ${categoriasText}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scoreCategorias} puntos</div>
+
+                <h3>Variable 4: Frecuencia del Tratamiento</h3>
+                <div class="info-row"><strong>Selección:</strong> ${frecuenciaText}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scoreFrecuencia} puntos</div>
+
+                <h3>Variable 5: Permanencia del Tratamiento</h3>
+                <div class="info-row"><strong>Selección:</strong> ${permanenciaText}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scorePermanencia} puntos</div>
+
+                <h3>Variable 6: Alcance Geográfico</h3>
+                <div class="info-row"><strong>Selección:</strong> ${geografiaText}</div>
+                <div class="info-row"><strong>Puntuación:</strong> ${scoreGeografia} puntos</div>
+            </div>
+
+            <div class="section">
+                <h2>🎯 Resultado de la Evaluación</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Número de Titulares</td><td>${scoreTitulares}</td></tr>
+                        <tr><td>Volumen de Datos</td><td>${scoreVolumen}</td></tr>
+                        <tr><td>Categorías de Datos</td><td>${scoreCategorias}</td></tr>
+                        <tr><td>Frecuencia</td><td>${scoreFrecuencia}</td></tr>
+                        <tr><td>Permanencia</td><td>${scorePermanencia}</td></tr>
+                        <tr><td>Alcance Geográfico</td><td>${scoreGeografia}</td></tr>
+                        <tr style="font-weight: bold; background-color: #f0f9ff;">
+                            <td>PUNTUACIÓN TOTAL (P)</td>
+                            <td>${totalScore}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="result-box">
+                    <h3>${isGranEscala ? '🚨 TRATAMIENTO DE GRAN ESCALA' : '✅ NO ES TRATAMIENTO DE GRAN ESCALA'}</h3>
+                    <p>
+                        ${isGranEscala 
+                            ? 'El tratamiento supera el umbral de 6 puntos y es considerado de GRAN ESCALA según el Art. 10 de la Resolución SPDP-SPD-2026-0005-R.' 
+                            : 'El tratamiento NO supera el umbral de 6 puntos. Sin embargo, debe cumplir con las obligaciones generales de la LOPDP.'}
+                    </p>
+                </div>
+
+                ${isGranEscala ? `
+                <div class="obligations">
+                    <h3>📋 Obligaciones Derivadas (Art. 12)</h3>
+                    <ul>
+                        <li><strong>Evaluación de Impacto:</strong> Debe realizar una Evaluación de Impacto en la Protección de Datos (EIPD).</li>
+                        <li><strong>Delegado de Protección de Datos:</strong> Designación obligatoria de un DPD.</li>
+                        <li><strong>Registro de Actividades:</strong> Incorporación en el RAT con evidencia del cálculo MTGE.</li>
+                        <li><strong>Responsabilidad Proactiva Reforzada:</strong> Activación de medidas reforzadas de accountability.</li>
+                        <li><strong>Revisión Periódica:</strong> Actualizar el MTGE al menos una vez al año.</li>
+                        <li><strong>Documentación:</strong> Conservar evidencia durante al menos 5 años.</li>
+                    </ul>
+                </div>
+                ` : ''}
+            </div>
+
+            <div class="footer">
+                <p><strong>Base Legal:</strong> Resolución SPDP-SPD-2026-0005-R | Superintendencia de Protección de Datos Personales de Ecuador</p>
+                <p>Documento generado el ${new Date().toLocaleDateString('es-EC')} a las ${new Date().toLocaleTimeString('es-EC')}</p>
+            </div>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Esperar a que cargue y ejecutar impresión
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+
+// Establecer fecha actual por defecto
+document.getElementById('fechaEvaluacion').valueAsDate = new Date();
+
+// Mensaje de bienvenida
+console.log('🛡️ MTGE - Matriz de Tratamiento a Gran Escala | LOPDP Ecuador');
+console.log('Aplicación desarrollada según Resolución SPDP-SPD-2026-0005-R');
+
+// ── Guardar evaluación en localStorage y redirigir al dashboard ──
+function guardarEnRegistro() {
+  const total = document.getElementById('totalScore').textContent;
+  if (total === '0') {
+    alert('⚠️ Primero debe calcular la puntuación.');
+    return;
+  }
+  const tratamiento = {
+    id: Date.now(),
+    nombre:      document.getElementById('nombreTratamiento').value,
+    responsable: document.getElementById('responsable').value,
+    finalidad:   document.getElementById('finalidad').value,
+    fecha:       document.getElementById('fechaEvaluacion').value,
+    departamento:document.getElementById('departamento').value,
+    evaluador:   document.getElementById('evaluador').value,
+    numeroRAT:   document.getElementById('numeroRAT').value,
+    titulares:   parseInt(document.getElementById('numTitulares').value) || 0,
+    volumen:     parseInt(document.getElementById('volumenDatos').value) || 0,
+    categorias:  parseFloat(document.querySelector('input[name="categorias"]:checked')?.value || 0),
+    frecuencia:  parseFloat(document.querySelector('input[name="frecuencia"]:checked')?.value  || 0),
+    permanencia: parseFloat(document.querySelector('input[name="permanencia"]:checked')?.value || 0),
+    geografia:   parseFloat(document.querySelector('input[name="geografia"]:checked')?.value   || 0),
+    puntaje:     parseFloat(total),
+    clasificacion: parseFloat(total) >= 6 ? 'gran-escala' : 'no-gran-escala'
+  };
+  const existentes = JSON.parse(localStorage.getItem('mtge_tratamientos') || '[]');
+  existentes.push(tratamiento);
+  localStorage.setItem('mtge_tratamientos', JSON.stringify(existentes));
+  alert('✅ Evaluación guardada exitosamente.');
+  window.location.href = 'dashboard.html';
+}
+  </script>
+</body>
+</html>
