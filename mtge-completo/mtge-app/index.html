@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTGE - Matriz de Tratamiento a Gran Escala | LOPDP Ecuador</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <h1>🛡️ MTGE - Matriz de Tratamiento a Gran Escala</h1>
+                <p class="subtitle">Ley Orgánica de Protección de Datos Personales de Ecuador</p>
+                <p class="resolution">Resolución SPDP-SPD-2026-0005-R</p>
+            </div>
+        </header>
+
+        <div class="info-banner">
+            <strong>ℹ️ Importante:</strong> Un tratamiento se considera de <strong>gran escala</strong> cuando el puntaje total es <strong>≥ 6 puntos</strong>
+        </div>
+
+        <form id="mtgeForm">
+            <!-- Información General -->
+            <section class="form-section">
+                <h2>📋 Información General del Tratamiento</h2>
+                
+                <div class="form-group">
+                    <label for="nombreTratamiento">Nombre del Tratamiento *</label>
+                    <input type="text" id="nombreTratamiento" required 
+                           placeholder="Ej: Gestión de Recursos Humanos">
+                </div>
+
+                <div class="form-group">
+                    <label for="responsable">Responsable del Tratamiento *</label>
+                    <input type="text" id="responsable" required 
+                           placeholder="Nombre de la organización">
+                </div>
+
+                <div class="form-group">
+                    <label for="finalidad">Finalidad del Tratamiento *</label>
+                    <textarea id="finalidad" required rows="3" 
+                              placeholder="Describa la finalidad del tratamiento de datos"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaEvaluacion">Fecha de Evaluación *</label>
+                    <input type="date" id="fechaEvaluacion" required>
+                </div>
+            </section>
+
+            <!-- Variable 1: Número de Titulares -->
+            <section class="form-section">
+                <h2>👥 Variable 1: Número de Titulares (12 meses)</h2>
+                <p class="variable-description">
+                    Número de personas físicas cuyos datos personales son objeto del tratamiento en un periodo de 12 meses.
+                    Cada titular se cuenta una sola vez.
+                </p>
+                
+                <div class="form-group">
+                    <label for="numTitulares">Número aproximado de titulares *</label>
+                    <input type="number" id="numTitulares" required min="0" 
+                           placeholder="Ej: 5000">
+                </div>
+
+                <div class="scoring-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rango</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0 - 1,000</td>
+                                <td>1 punto</td>
+                            </tr>
+                            <tr>
+                                <td>1,001 - 10,000</td>
+                                <td>2 puntos</td>
+                            </tr>
+                            <tr>
+                                <td>10,001 - 100,000</td>
+                                <td>3 puntos</td>
+                            </tr>
+                            <tr>
+                                <td>> 101,000</td>
+                                <td>4 puntos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 1:</span>
+                    <span class="score" id="scoreTitulares">0</span>
+                </div>
+            </section>
+
+            <!-- Variable 2: Volumen de Datos -->
+            <section class="form-section">
+                <h2>📊 Variable 2: Volumen de Datos Personales</h2>
+                <p class="variable-description">
+                    Cantidad total de tipos de datos personales diferentes por cada titular.
+                </p>
+                
+                <div class="form-group">
+                    <label for="volumenDatos">Número de tipos de datos por titular *</label>
+                    <input type="number" id="volumenDatos" required min="1" 
+                           placeholder="Ej: 25">
+                </div>
+
+                <div class="scoring-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rango</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Hasta 10 tipos</td>
+                                <td>0.5 puntos</td>
+                            </tr>
+                            <tr>
+                                <td>11 - 30 tipos</td>
+                                <td>1 punto</td>
+                            </tr>
+                            <tr>
+                                <td>31 - 100 tipos</td>
+                                <td>2 puntos</td>
+                            </tr>
+                            <tr>
+                                <td>> 101 tipos</td>
+                                <td>3 puntos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 2:</span>
+                    <span class="score" id="scoreVolumen">0</span>
+                </div>
+            </section>
+
+            <!-- Variable 3: Categorías de Datos -->
+            <section class="form-section">
+                <h2>🔐 Variable 3: Categorías de Datos Personales</h2>
+                <p class="variable-description">
+                    Clasificación según la naturaleza y sensibilidad de los datos tratados.
+                </p>
+                
+                <div class="form-group">
+                    <label>Tipo de datos tratados *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="categorias" value="0.5" required>
+                            <span>Solo datos básicos (nombre, dirección, email, teléfono, etc.)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="categorias" value="2">
+                            <span>Al menos una categoría de datos especiales (salud, orientación sexual, ideología política, religión, origen étnico, datos biométricos o genéticos)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="categorias" value="3">
+                            <span>Más de una categoría de datos especiales, datos de grupos vulnerables (niños, adultos mayores, personas con discapacidad) o datos penales</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 3:</span>
+                    <span class="score" id="scoreCategorias">0</span>
+                </div>
+            </section>
+
+            <!-- Variable 4: Frecuencia -->
+            <section class="form-section">
+                <h2>⏱️ Variable 4: Frecuencia del Tratamiento</h2>
+                <p class="variable-description">
+                    Regularidad con la que se ejecutan operaciones de tratamiento de datos.
+                </p>
+                
+                <div class="form-group">
+                    <label>Frecuencia del tratamiento *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="frecuencia" value="0.5" required>
+                            <span>Puntual - Una sola vez o de manera excepcional</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="frecuencia" value="1">
+                            <span>Periódica/Recurrente - A intervalos regulares (semanal, mensual, trimestral)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="frecuencia" value="2">
+                            <span>Continua - En tiempo real o de manera permanente y constante</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 4:</span>
+                    <span class="score" id="scoreFrecuencia">0</span>
+                </div>
+            </section>
+
+            <!-- Variable 5: Permanencia -->
+            <section class="form-section">
+                <h2>📅 Variable 5: Permanencia del Tratamiento</h2>
+                <p class="variable-description">
+                    Duración prevista del tratamiento activo de los datos personales.
+                </p>
+                
+                <div class="form-group">
+                    <label>Permanencia del tratamiento *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="permanencia" value="0.5" required>
+                            <span>Ocasional - Menos de 1 año</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="permanencia" value="1">
+                            <span>Temporal - Entre 1 y menos de 3 años</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="permanencia" value="2">
+                            <span>Prolongada - 3 años o más</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 5:</span>
+                    <span class="score" id="scorePermanencia">0</span>
+                </div>
+            </section>
+
+            <!-- Variable 6: Alcance Geográfico -->
+            <section class="form-section">
+                <h2>🌍 Variable 6: Alcance Geográfico</h2>
+                <p class="variable-description">
+                    Extensión territorial del impacto del tratamiento de datos.
+                </p>
+                
+                <div class="form-group">
+                    <label>Alcance geográfico del tratamiento *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="geografia" value="1" required>
+                            <span>Local - Limitado a una provincia, cantón o localidad específica</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="geografia" value="2">
+                            <span>Nacional - Abarca varias provincias o todo el territorio ecuatoriano</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="geografia" value="3">
+                            <span>Transfronterizo/Global - Incluye transferencias internacionales o tratamiento en múltiples países</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <span>Puntuación Variable 6:</span>
+                    <span class="score" id="scoreGeografia">0</span>
+                </div>
+            </section>
+
+            <!-- Resultado Final -->
+            <section class="form-section result-section">
+                <h2>🎯 Resultado de la Evaluación MTGE</h2>
+                
+                <div class="final-score">
+                    <div class="score-breakdown">
+                        <h3>Desglose de Puntuación</h3>
+                        <table>
+                            <tr>
+                                <td>Variable 1 - Número de Titulares:</td>
+                                <td><strong id="finalScoreTitulares">0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Variable 2 - Volumen de Datos:</td>
+                                <td><strong id="finalScoreVolumen">0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Variable 3 - Categorías de Datos:</td>
+                                <td><strong id="finalScoreCategorias">0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Variable 4 - Frecuencia:</td>
+                                <td><strong id="finalScoreFrecuencia">0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Variable 5 - Permanencia:</td>
+                                <td><strong id="finalScorePermanencia">0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Variable 6 - Alcance Geográfico:</td>
+                                <td><strong id="finalScoreGeografia">0</strong></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>PUNTUACIÓN TOTAL (P):</strong></td>
+                                <td><strong id="totalScore">0</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="classification" id="classification">
+                        <div class="classification-icon">⚖️</div>
+                        <h3 id="classificationTitle">Complete el formulario</h3>
+                        <p id="classificationDescription">Ingrese todos los datos requeridos para obtener la clasificación</p>
+                    </div>
+
+                    <div class="obligations" id="obligations" style="display: none;">
+                        <h3>📋 Obligaciones Derivadas (Art. 12 Resolución)</h3>
+                        <ul id="obligationsList"></ul>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary" onclick="calculateScore()">
+                        🧮 Calcular Puntuación
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="exportPDF()">
+                        📄 Exportar a PDF
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        🔄 Nueva Evaluación
+                    </button>
+                </div>
+            </section>
+        </form>
+
+        <footer>
+            <p>
+                <strong>Base Legal:</strong> Resolución SPDP-SPD-2026-0005-R | 
+                Superintendencia de Protección de Datos Personales de Ecuador
+            </p>
+            <p class="footer-note">
+                Esta aplicación es una herramienta de apoyo. Para consultas oficiales, diríjase a la SPDP.
+            </p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

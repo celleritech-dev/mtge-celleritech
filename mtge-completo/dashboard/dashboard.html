@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard MTGE - Panel de Control y Análisis</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>🛡️ MTGE Dashboard</h2>
+                <p>Panel de Control</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-section="overview">
+                    <span class="icon">📊</span>
+                    <span>Resumen General</span>
+                </a>
+                <a href="#" class="nav-item" data-section="treatments">
+                    <span class="icon">📋</span>
+                    <span>Tratamientos</span>
+                </a>
+                <a href="#" class="nav-item" data-section="analytics">
+                    <span class="icon">📈</span>
+                    <span>Análisis Detallado</span>
+                </a>
+                <a href="#" class="nav-item" data-section="compliance">
+                    <span class="icon">✅</span>
+                    <span>Cumplimiento</span>
+                </a>
+                <a href="#" class="nav-item" data-section="risks">
+                    <span class="icon">⚠️</span>
+                    <span>Gestión de Riesgos</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <span class="icon">📄</span>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-new-treatment" onclick="window.open('index.html', '_blank')">
+                    ➕ Nueva Evaluación MTGE
+                </button>
+                <button class="btn-import" onclick="importarDatos()">
+                    📥 Importar Datos
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1 id="sectionTitle">Resumen General</h1>
+                    <p class="breadcrumb">Dashboard / <span id="breadcrumb">Resumen</span></p>
+                </div>
+                <div class="header-right">
+                    <div class="date-filter">
+                        <label>Período:</label>
+                        <select id="periodFilter" onchange="filtrarPorPeriodo()">
+                            <option value="all">Todo el tiempo</option>
+                            <option value="month">Último mes</option>
+                            <option value="quarter">Último trimestre</option>
+                            <option value="year" selected>Último año</option>
+                        </select>
+                    </div>
+                    <button class="btn-refresh" onclick="cargarDatos()">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview-section" class="content-section active">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #dbeafe;">📋</div>
+                        <div class="kpi-content">
+                            <p class="kpi-label">Total Tratamientos</p>
+                            <h3 class="kpi-value" id="totalTratamientos">0</h3>
+                            <span class="kpi-trend positive">+12% vs. período anterior</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #fee2e2;">🚨</div>
+                        <div class="kpi-content">
+                            <p class="kpi-label">Gran Escala</p>
+                            <h3 class="kpi-value" id="granEscala">0</h3>
+                            <span class="kpi-trend neutral" id="granEscalaPct">0% del total</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #fef3c7;">⚖️</div>
+                        <div class="kpi-content">
+                            <p class="kpi-label">Puntuación Promedio</p>
+                            <h3 class="kpi-value" id="promedioScore">0</h3>
+                            <span class="kpi-trend neutral">Umbral: 6 puntos</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #d1fae5;">👥</div>
+                        <div class="kpi-content">
+                            <p class="kpi-label">Titulares Totales</p>
+                            <h3 class="kpi-value" id="totalTitulares">0</h3>
+                            <span class="kpi-trend positive" id="titularesTrend">Across all treatments</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Distribución por Clasificación</h3>
+                            <button class="btn-icon" onclick="descargarGrafico('clasificacionChart')">⬇️</button>
+                        </div>
+                        <canvas id="clasificacionChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Distribución de Puntuaciones</h3>
+                            <button class="btn-icon" onclick="descargarGrafico('scoreDistChart')">⬇️</button>
+                        </div>
+                        <canvas id="scoreDistChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="charts-grid">
+                    <div class="chart-card chart-wide">
+                        <div class="chart-header">
+                            <h3>Evolución de Tratamientos por Mes</h3>
+                            <button class="btn-icon" onclick="descargarGrafico('evolucionChart')">⬇️</button>
+                        </div>
+                        <canvas id="evolucionChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Variables Críticas</h3>
+                            <button class="btn-icon" onclick="descargarGrafico('variablesChart')">⬇️</button>
+                        </div>
+                        <canvas id="variablesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Alerts Section -->
+                <div class="alerts-section">
+                    <h3>⚠️ Alertas y Recomendaciones</h3>
+                    <div id="alertsContainer" class="alerts-container">
+                        <!-- Alerts will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Treatments Section -->
+            <section id="treatments-section" class="content-section">
+                <div class="table-controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar tratamiento..." 
+                               onkeyup="filtrarTabla()">
+                    </div>
+                    <div class="filter-group">
+                        <select id="filterClasificacion" onchange="filtrarTabla()">
+                            <option value="">Todas las clasificaciones</option>
+                            <option value="gran-escala">Gran Escala</option>
+                            <option value="no-gran-escala">No Gran Escala</option>
+                        </select>
+                        <button class="btn-export" onclick="exportarTabla()">📥 Exportar CSV</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="tratamientosTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Tratamiento ↕️</th>
+                                <th onclick="sortTable(1)">Responsable ↕️</th>
+                                <th onclick="sortTable(2)">Fecha ↕️</th>
+                                <th onclick="sortTable(3)">Puntuación ↕️</th>
+                                <th onclick="sortTable(4)">Clasificación ↕️</th>
+                                <th onclick="sortTable(5)">Titulares ↕️</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tratamientosTableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics-section" class="content-section">
+                <div class="analytics-grid">
+                    <div class="chart-card chart-full">
+                        <div class="chart-header">
+                            <h3>Análisis de Variables MTGE</h3>
+                            <p class="chart-subtitle">Promedios por variable en todos los tratamientos</p>
+                        </div>
+                        <canvas id="variablesRadarChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Categorías de Datos</h3>
+                        </div>
+                        <canvas id="categoriasChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Alcance Geográfico</h3>
+                        </div>
+                        <canvas id="geografiaChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Frecuencia de Tratamiento</h3>
+                        </div>
+                        <canvas id="frecuenciaChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Permanencia de Tratamiento</h3>
+                        </div>
+                        <canvas id="permanenciaChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Comparative Analysis -->
+                <div class="comparison-section">
+                    <h3>📊 Análisis Comparativo</h3>
+                    <div class="comparison-controls">
+                        <select id="compare1" onchange="actualizarComparacion()">
+                            <option value="">Seleccionar tratamiento 1</option>
+                        </select>
+                        <span class="vs-label">VS</span>
+                        <select id="compare2" onchange="actualizarComparacion()">
+                            <option value="">Seleccionar tratamiento 2</option>
+                        </select>
+                    </div>
+                    <div id="comparisonResult" class="comparison-result">
+                        <p class="placeholder-text">Selecciona dos tratamientos para compararlos</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Compliance Section -->
+            <section id="compliance-section" class="content-section">
+                <div class="compliance-overview">
+                    <div class="compliance-card">
+                        <h3>📋 Obligaciones Activas</h3>
+                        <div class="compliance-stat">
+                            <span class="stat-number" id="obligacionesActivas">0</span>
+                            <span class="stat-label">Tratamientos con obligaciones especiales</span>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <h3>✅ Evaluaciones de Impacto</h3>
+                        <div class="compliance-stat">
+                            <span class="stat-number" id="eipdRequeridas">0</span>
+                            <span class="stat-label">EIPD requeridas</span>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <h3>👤 Delegados DPD</h3>
+                        <div class="compliance-stat">
+                            <span class="stat-number" id="dpdRequeridos">0</span>
+                            <span class="stat-label">Requieren designación de DPD</span>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <h3>📝 Registro RAT</h3>
+                        <div class="compliance-stat">
+                            <span class="stat-number" id="ratRequeridos">0</span>
+                            <span class="stat-label">Deben incorporarse al RAT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compliance-details">
+                    <h3>📋 Detalle de Obligaciones por Tratamiento</h3>
+                    <div id="obligacionesDetalle" class="obligations-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="timeline-section">
+                    <h3>📅 Próximas Revisiones</h3>
+                    <div id="proximasRevisiones" class="timeline">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risks Section -->
+            <section id="risks-section" class="content-section">
+                <div class="risk-matrix">
+                    <h3>🎯 Matriz de Riesgos</h3>
+                    <div class="risk-grid">
+                        <div class="risk-cell risk-high">
+                            <h4>Riesgo Alto</h4>
+                            <p class="risk-count" id="riskHigh">0</p>
+                            <p class="risk-label">tratamientos</p>
+                        </div>
+                        <div class="risk-cell risk-medium">
+                            <h4>Riesgo Medio</h4>
+                            <p class="risk-count" id="riskMedium">0</p>
+                            <p class="risk-label">tratamientos</p>
+                        </div>
+                        <div class="risk-cell risk-low">
+                            <h4>Riesgo Bajo</h4>
+                            <p class="risk-count" id="riskLow">0</p>
+                            <p class="risk-label">tratamientos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Análisis de Riesgo por Variables</h3>
+                    </div>
+                    <canvas id="riskAnalysisChart"></canvas>
+                </div>
+
+                <div class="recommendations">
+                    <h3>💡 Recomendaciones de Mitigación</h3>
+                    <div id="recommendationsContainer">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports-section" class="content-section">
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <div class="report-icon">📊</div>
+                        <h3>Reporte Ejecutivo</h3>
+                        <p>Resumen general para dirección con métricas clave y tendencias</p>
+                        <button class="btn-generate" onclick="generarReporteEjecutivo()">
+                            Generar PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">📋</div>
+                        <h3>Reporte de Cumplimiento</h3>
+                        <p>Detalle de obligaciones legales y estado de cumplimiento</p>
+                        <button class="btn-generate" onclick="generarReporteCumplimiento()">
+                            Generar PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">⚠️</div>
+                        <h3>Reporte de Riesgos</h3>
+                        <p>Análisis de riesgos identificados y recomendaciones</p>
+                        <button class="btn-generate" onclick="generarReporteRiesgos()">
+                            Generar PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">📈</div>
+                        <h3>Reporte de Tendencias</h3>
+                        <p>Evolución temporal y análisis predictivo</p>
+                        <button class="btn-generate" onclick="generarReporteTendencias()">
+                            Generar PDF
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">📄</div>
+                        <h3>Exportación Completa</h3>
+                        <p>Base de datos completa en formato Excel</p>
+                        <button class="btn-generate" onclick="exportarExcel()">
+                            Descargar XLSX
+                        </button>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-icon">🔄</div>
+                        <h3>Reporte Programado</h3>
+                        <p>Configurar envío automático de reportes</p>
+                        <button class="btn-generate" onclick="configurarReporteProgramado()">
+                            Configurar
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Treatment Details -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="dashboard-script.js"></script>
+</body>
+</html>

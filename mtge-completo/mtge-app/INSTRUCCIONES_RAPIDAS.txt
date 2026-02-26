@@ -1,0 +1,155 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                     MTGE - APLICACIÓN WEB LOPDP ECUADOR                      ║
+║                           INSTRUCCIONES RÁPIDAS                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+🚀 INICIO RÁPIDO (3 PASOS)
+═══════════════════════════════════════════════════════════════════════════════
+
+1️⃣  DESCARGAR
+   • Descarga el archivo mtge-app.zip
+   • Descomprime en cualquier carpeta de tu computadora
+
+2️⃣  ABRIR
+   • Abre el archivo "index.html" con tu navegador web
+   • Funciona sin conexión a Internet
+   • Recomendado: Chrome, Edge, Firefox, Safari
+
+3️⃣  USAR
+   • Completa el formulario con los datos de tu tratamiento
+   • Click en "Calcular Puntuación"
+   • Exporta el resultado a PDF si lo necesitas
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 ¿QUÉ HACE ESTA APLICACIÓN?
+═══════════════════════════════════════════════════════════════════════════════
+
+La aplicación calcula automáticamente si un tratamiento de datos personales
+se considera de "GRAN ESCALA" según la legislación ecuatoriana (LOPDP).
+
+Evalúa 6 variables:
+  ✓ Número de titulares (personas afectadas)
+  ✓ Volumen de datos (tipos de información)
+  ✓ Categorías de datos (básicos vs sensibles)
+  ✓ Frecuencia del tratamiento
+  ✓ Permanencia del tratamiento
+  ✓ Alcance geográfico
+
+Si el puntaje total ≥ 6 puntos → Es tratamiento de GRAN ESCALA
+Esto activa obligaciones adicionales según la Resolución SPDP-SPD-2026-0005-R
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 EJEMPLO PRÁCTICO
+═══════════════════════════════════════════════════════════════════════════════
+
+Tratamiento: Sistema de Recursos Humanos
+Responsable: Mi Empresa S.A.
+
+Variable 1: 1,500 empleados          → 2 puntos
+Variable 2: 30 tipos de datos        → 1 punto
+Variable 3: Datos de salud           → 2 puntos
+Variable 4: Procesamiento continuo   → 2 puntos
+Variable 5: 5 años de retención      → 2 puntos
+Variable 6: Nacional                 → 2 puntos
+                                     ──────────
+                            TOTAL:     11 puntos
+
+RESULTADO: ¡ES TRATAMIENTO DE GRAN ESCALA!
+
+Obligaciones:
+• Realizar Evaluación de Impacto (EIPD)
+• Designar Delegado de Protección de Datos
+• Registrar en el RAT
+• Aplicar medidas reforzadas
+• Revisar anualmente
+
+═══════════════════════════════════════════════════════════════════════════════
+
+💡 CARACTERÍSTICAS DESTACADAS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Cálculo automático en tiempo real
+✓ Validaciones según normativa oficial
+✓ Exportación profesional a PDF
+✓ Interfaz intuitiva y moderna
+✓ Funciona completamente offline
+✓ Sin envío de datos a servidores
+✓ Compatible con todos los navegadores
+✓ Responsive (móvil, tablet, desktop)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📁 ARCHIVOS INCLUIDOS
+═══════════════════════════════════════════════════════════════════════════════
+
+index.html          → Aplicación principal (ABRE ESTE ARCHIVO)
+styles.css          → Diseño y estilos
+script.js           → Lógica de cálculo
+README.md           → Documentación completa
+INSTRUCCIONES_RAPIDAS.txt → Este archivo
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🌐 USAR CON SERVIDOR LOCAL (OPCIONAL)
+═══════════════════════════════════════════════════════════════════════════════
+
+Si prefieres usar un servidor local:
+
+Opción A - Python:
+  python -m http.server 8000
+  Luego abre: http://localhost:8000
+
+Opción B - Node.js:
+  npx http-server -p 8000
+  Luego abre: http://localhost:8000
+
+Opción C - VS Code:
+  Instala extensión "Live Server"
+  Click derecho en index.html → "Open with Live Server"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚖️  BASE LEGAL
+═══════════════════════════════════════════════════════════════════════════════
+
+• Resolución: SPDP-SPD-2026-0005-R
+• Organismo: Superintendencia de Protección de Datos Personales (SPDP)
+• Ley: Ley Orgánica de Protección de Datos Personales (LOPDP) - Ecuador
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📞 CONSULTAS OFICIALES
+═══════════════════════════════════════════════════════════════════════════════
+
+Para consultas legales oficiales:
+  Web: https://www.datospersonales.gob.ec/
+  Email: info@datospersonales.gob.ec
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  AVISO IMPORTANTE
+═══════════════════════════════════════════════════════════════════════════════
+
+Esta aplicación es una herramienta de apoyo para facilitar el cumplimiento
+normativo. No constituye asesoría legal oficial. Para interpretaciones
+vinculantes, consulte con la SPDP o un profesional en protección de datos.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔒 PRIVACIDAD Y SEGURIDAD
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Todo el procesamiento es local (en tu navegador)
+✓ No se envían datos a servidores externos
+✓ No usa cookies ni tracking
+✓ Código fuente abierto y auditable
+✓ Cumple con principios de Privacy by Design
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                       ¡Listo para comenzar! 🚀
+                    Abre index.html en tu navegador
+
+═══════════════════════════════════════════════════════════════════════════════
